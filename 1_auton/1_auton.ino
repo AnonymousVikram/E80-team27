@@ -65,10 +65,10 @@ void setup() {
 
   
   // timings for down, through, and up, and initial wait
-  waitTime = 15000;
+  waitTime = 60000;
   downTime = 4000;
   throughTime = 5000;
-  upTime = 10000;
+  upTime = 30000;
 
   downTime = waitTime + downTime;
   throughTime = downTime + throughTime;
@@ -100,9 +100,9 @@ void loop() {
   } else if (currentTime < downTime) {
     // change the negative sign depending on orientation of thruster
     motorDriver.drive(0, -255, 0);
-  } else if (currentTime < throughTime) {
+  } else if (currentTime-1000 < throughTime) {
     motorDriver.drive(255, int(255 / 3), 255);
-  } else if (currentTime < upTime) {
+  } else if (currentTime-2000 < upTime) {
     motorDriver.drive(0, 255, 0);
   } else {
     motorDriver.drive(0, 0, 0);

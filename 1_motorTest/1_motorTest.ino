@@ -73,23 +73,23 @@ void loop() {
   // arguments motorA_power, motorB_power, motorC_power:
   //       void motorDriver.drive(int motorA_power,int motorB_power,int
   //       motorC_power);
-  // the value of motorX_power can range from -255 to 255, and sets the PWM
+  // the value of motorX_power can range from -100 to 100, and sets the PWM
   // applied to the motor The following example will turn on motor B for four
   // seconds between seconds 4 and 8
 
-  if (currentTime > 1000 && currentTime < 2000) {
+  if (currentTime > 60000 && currentTime < 62500) {
     // Test Motor A & C
-    motorDriver.drive(255, 0, 255);
-  } else if (currentTime > 2000 && currentTime < 3000) {
-    motorDriver.drive(-255, 0, -255);
-  } else if (currentTime > 3000 && currentTime < 4000) {
+    motorDriver.drive(100, 0, 100);
+  } else if (currentTime > 62500 && currentTime < 65000) {
+    motorDriver.drive(-100, 0, -100);
+  } else if (currentTime > 65000 && currentTime < 67500) {
     // Test Motor B
-    motorDriver.drive(0, 255, 0);
-  } else if (currentTime > 4000 && currentTime < 5000) {
-    motorDriver.drive(0, -255, 0);
-  } else if (currentTime > 5000 && currentTime < 8000) {
+    motorDriver.drive(0, 100, 0);
+  } else if (currentTime > 67500 && currentTime < 70000) {
+    motorDriver.drive(0, -100, 0);
+  } else if (currentTime > 70000 && currentTime < 72500) {
     // Bring the robot back up
-    motorDriver.drive(0, 255, 0);
+    motorDriver.drive(0, 100, 0);
   } else {
     motorDriver.drive(0, 0, 0);
   }
