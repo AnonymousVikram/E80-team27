@@ -4,6 +4,12 @@ title: "Lab 0: Tutorial and Skills Review"
 
 Team size: 4
 
+Submission Sheet: Submit your Matlab on-ramp assignment on the E80 Canvas page
+
+Prelab Help Sheet: No prelab required this week
+
+Writing: No writing this week, just the kickoff lecture
+
 ## Introduction
 
 This lab is an opportunity for refreshing your skills and getting software and hardware setup for Labs 1 through 6 and the project Jump Start.
@@ -32,6 +38,7 @@ Every member of the team should complete the following sections:
 - Soldering (though only one person can solder the Teensy, everyone should practice)
 - Github Desktop and Arduino IDE Setup
 - Arduino Practice
+- SD Card Reading
 - MATLAB Access
 - MATLAB On-ramp
 
@@ -209,6 +216,10 @@ Then try these tutorials if you have time.
 
 1. [Blinking lights on the Arduino board](https://www.pjrc.com/teensy/tutorial.html):  
 2. [Hooking up an external LED](https://www.pjrc.com/teensy/tutorial2.html) 
+
+## SD Card Reading
+
+Find a micro-SD card.  Make sure your computer can read it.
 
 ## MATLAB Access
 
