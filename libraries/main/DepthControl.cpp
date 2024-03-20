@@ -25,16 +25,16 @@ void DepthControl::dive(z_state_t * state, int currentTime_in) {
 
   // Set the value of depth_des, depth, vertical control effort (uV) appropriately for P control
   // You can access the desired depth from the wayPoints array at the index held in currentWayPoint
+  double depth_des = wayPoints[currentWayPoint];
   // You can access the measured depth calculated in ZStateEstimator.cpp using state->z
-  
-  //////////////////////////////////////////////////////////////////////
-  // write code here
-  //////////////////////////////////////////////////////////////////////
-  
-  ///////////////////////////////////////////////////////////////////////
-  // don't change code past this point
-  ///////////////////////////////////////////////////////////////////////
+  double depth = state->z;
+  double depth_error = depth_des - depth;
 
+  // Set the vertical control effort (uV) to a value that will drive the depth error to zero usig K
+  int uV = Kp * depth_error;
+  // limit uV to +- 200
+  if (uV > 200) uV = 200;
+  if (uV < -200) uV = -200;
 }
 
 void DepthControl::surface(z_state_t * state) {

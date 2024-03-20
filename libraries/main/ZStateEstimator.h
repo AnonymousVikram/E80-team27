@@ -34,7 +34,7 @@ public:
   int lastExecutionTime = -1;
 
 private:
-  // set pressure sensor calibration slope and incercept below
+  // set pressure sensor calibration slope and intercept below
   const float depthCal_slope = 1;
   const float depthCal_intercept = 1;
 
