@@ -6,7 +6,7 @@
 #include "DataSource.h"
 
 typedef struct {
-    float z = 0; // z position (depth) in globad frame [m]
+  float z = 0; // z position (depth) in globad frame [m]
 } z_state_t;
 
 /*
@@ -14,8 +14,7 @@ typedef struct {
  * incorperating measurements of the system outputs from the Pressure
  * Sensor, as well as the control inputs to the system
  */
-class ZStateEstimator : public DataSource
-{
+class ZStateEstimator : public DataSource {
 public:
   ZStateEstimator(void);
 
@@ -29,15 +28,14 @@ public:
   String printState(void);
 
   // from DataSource
-  size_t writeDataBytes(unsigned char * buffer, size_t idx);
+  size_t writeDataBytes(unsigned char *buffer, size_t idx);
 
   int lastExecutionTime = -1;
 
 private:
   // set pressure sensor calibration slope and intercept below
-  const float depthCal_slope = 1;
-  const float depthCal_intercept = 1;
-
+  const float depthCal_slope = 0.873;
+  const float depthCal_intercept = -0.764;
 };
 
 #endif
