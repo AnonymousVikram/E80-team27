@@ -1,5 +1,5 @@
 {
     "configuration": "usb=serial,speed=600,opt=o2std,keys=en-us",
     "board": "teensy:avr:teensy40",
-    "sketch": "E80_Lab_01\\E80_Lab_01 - Motor Test.ino"
+    "sketch": "Default_Robot\\Default_Robot.ino"
 }
