@@ -35,7 +35,7 @@
 #define ERROR_FLAG_C 9
 
 // Depth Control
-#define PRESSURE_SENSOR_PIN 25 // Teensy pin A00
+#define PRESSURE_SENSOR_PIN 14 // Teensy pin A00
 
 // Flow Sensor
 #define FLOW_SENSOR_PIN 26

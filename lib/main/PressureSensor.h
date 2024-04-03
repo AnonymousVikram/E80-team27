@@ -31,7 +31,7 @@ public:
   int lastExecutionTime = -1;
 
 private:
-  float pressure_cal_slope = 0.0F;
+  float pressure_cal_slope = 1.0F;
   float pressure_cal_offset = 0.0F;
 };
 #endif

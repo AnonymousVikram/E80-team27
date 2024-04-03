@@ -1,11 +1,11 @@
 #include "SensorGyro.h"
 #include "Printer.h"
+#include "TimingOffsets.h"
 extern Printer printer;
 
 SensorGyro::SensorGyro(void)
-  : DataSource("rollGyro,pitchGyro,headingGyro,gyroX,gyroY,gyroZ",
-               "float,float,float,float,float,float") {
-}
+    : DataSource("rollGyro,pitchGyro,headingGyro,gyroX,gyroY,gyroZ",
+                 "float,float,float,float,float,float") {}
 
 void SensorGyro::init(void) {
   Serial.print("Initializing Gyro... ");
@@ -33,20 +33,26 @@ void SensorGyro::read(void) {
   state.dpitch = gyro_event.gyro.y - gyro_offsets[1];
   state.dheading = gyro_event.gyro.z - gyro_offsets[2];
 
-  // Update orientation
-  orientation.roll += state.droll;
-  orientation.pitch += state.dpitch;
-  orientation.yaw += state.dheading;
+  // Update orientation if the gyro crosses a threshold
+  if (abs(state.droll) > GYRO_THRESHOLD) {
+    orientation.roll += state.droll * LOOP_PERIOD / 1000.0;
+  }
+  if (abs(state.dpitch) > GYRO_THRESHOLD) {
+    orientation.pitch += state.dpitch * LOOP_PERIOD / 1000.0;
+  }
+  if (abs(state.dheading) > GYRO_THRESHOLD) {
+    orientation.yaw += state.dheading * LOOP_PERIOD / 1000.0;
+  }
 }
 
 String SensorGyro::printRollPitchYaw(void) {
   String GyroStr = "[Gyro Angles] ";
   GyroStr += "dRoll: ";
-  GyroStr += state.droll;
+  GyroStr += state.droll * 180 / PI;
   GyroStr += " dPitch: ";
-  GyroStr += state.dpitch;
+  GyroStr += state.dpitch * 180 / PI;
   GyroStr += " dYaw: ";
-  GyroStr += state.dheading;
+  GyroStr += state.dheading * 180 / PI;
   return GyroStr;
 }
 
@@ -64,21 +70,21 @@ String SensorGyro::printAccels(void) {
 String SensorGyro::printOrientation(void) {
   String GyroStr = "[Gyro Orientation] ";
   GyroStr += "Roll: ";
-  GyroStr += orientation.roll;
+  GyroStr += orientation.roll * 180 / PI;
   GyroStr += " Pitch: ";
-  GyroStr += orientation.pitch;
+  GyroStr += orientation.pitch * 180 / PI;
   GyroStr += " Yaw: ";
-  GyroStr += orientation.yaw;
+  GyroStr += orientation.yaw * 180 / PI;
   return GyroStr;
 }
 
-size_t SensorGyro::writeDataBytes(unsigned char * buffer, size_t idx) {
-  float * data_slot = (float *) &buffer[idx];
+size_t SensorGyro::writeDataBytes(unsigned char *buffer, size_t idx) {
+  float *data_slot = (float *)&buffer[idx];
   data_slot[0] = state.droll;
   data_slot[1] = state.dpitch;
   data_slot[2] = state.dheading;
   data_slot[3] = state.accelX;
   data_slot[4] = state.accelY;
   data_slot[5] = state.accelZ;
-  return idx + 6*sizeof(float);
+  return idx + 6 * sizeof(float);
 }

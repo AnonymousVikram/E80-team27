@@ -16,6 +16,7 @@ void PressureSensor::init(void) {
 
 void PressureSensor::read(void) {
   float curPres = analogRead(PRESSURE_SENSOR_PIN);
+  curPres = curPres / 1023.0 * 3.3;
   state.z = (curPres + pressure_cal_offset) * pressure_cal_slope;
 }
 
