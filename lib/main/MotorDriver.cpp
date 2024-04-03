@@ -8,7 +8,7 @@
 extern Printer printer;
 
 MotorDriver::MotorDriver()
-: DataSource("motorA,motorB,motorC","int,int,int")
+: DataSource("motorA,motorB,motorC,motorD,motorE,motorF","int,int,int,int,int,int")
 {
   for (int m = 0; m < NUM_MOTORS; m++) {
     motorValues[m] = 0;
@@ -44,19 +44,25 @@ void MotorDriver::apply(void)
   }
 }
 
-void MotorDriver::drive(int motorA_power,int motorB_power,int motorC_power) {
+void MotorDriver::drive(int motorA_power,int motorB_power,int motorC_power, int motorD_power, int motorE_power, int motorF_power) {
   motorValues[MOTOR_A_INDEX] = motorA_power; //M1
   motorValues[MOTOR_B_INDEX] = motorB_power; //M2
   motorValues[MOTOR_C_INDEX] = motorC_power; //M3
+  motorValues[MOTOR_D_INDEX] = motorD_power; //M4
+  motorValues[MOTOR_E_INDEX] = motorE_power; //M5
+  motorValues[MOTOR_F_INDEX] = motorF_power; //M6
   apply();
   printState();
 }
 
 String MotorDriver::printState(void) {
   String printString =
-    "Motors: PWMA: "  + String(pwmDir[MOTOR_A_INDEX] ? " " : "-") + String( pwmValues[MOTOR_A_INDEX] ) +  
+    "[Motors]: PWMA: "  + String(pwmDir[MOTOR_A_INDEX] ? " " : "-") + String( pwmValues[MOTOR_A_INDEX] ) +  
            " PWMB: "  + String(pwmDir[MOTOR_B_INDEX] ? " " : "-") + String( pwmValues[MOTOR_B_INDEX] ) +  
-           " PWMC: "  + String(pwmDir[MOTOR_C_INDEX] ? " " : "-") + String( pwmValues[MOTOR_C_INDEX] ) ; 
+           " PWMC: "  + String(pwmDir[MOTOR_C_INDEX] ? " " : "-") + String( pwmValues[MOTOR_C_INDEX] ) +
+            " PWMD: "  + String(pwmDir[MOTOR_D_INDEX] ? " " : "-") + String( pwmValues[MOTOR_D_INDEX] ) +
+            " PWME: "  + String(pwmDir[MOTOR_E_INDEX] ? " " : "-") + String( pwmValues[MOTOR_E_INDEX] ) +
+            " PWMF: "  + String(pwmDir[MOTOR_F_INDEX] ? " " : "-") + String( pwmValues[MOTOR_F_INDEX] );
   return printString;
 }
 
