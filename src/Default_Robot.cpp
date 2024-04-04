@@ -60,9 +60,9 @@ double waypoints[] = {
 
 void setup() {
 
-  // logger.include(&imu);
-  // logger.include(&gps);
-  // logger.include(&motor_driver);
+  logger.include(&imu);
+  logger.include(&gps);
+  logger.include(&motor_driver);
   // logger.include(&adc);
   // logger.include(&ef);
   logger.include(&gyro);
@@ -71,21 +71,21 @@ void setup() {
 
   printer.init();
   // ef.init();
-  // imu.init();
+  imu.init();
   UartSerial.begin(9600);
-  // gps.init(&GPS);
-  // motor_driver.init();
-  // led.init();
+  gps.init(&GPS);
+  motor_driver.init();
+  led.init();
   gyro.init();
 
   printer.printMessage("Starting main loop", 1);
   loopStartTime = millis();
   printer.lastExecutionTime = loopStartTime - LOOP_PERIOD + PRINTER_LOOP_OFFSET;
-  // imu.lastExecutionTime             = loopStartTime - LOOP_PERIOD +
-  // IMU_LOOP_OFFSET; gps.lastExecutionTime             = loopStartTime -
-  // LOOP_PERIOD + GPS_LOOP_OFFSET; adc.lastExecutionTime             =
-  // loopStartTime - LOOP_PERIOD + ADC_LOOP_OFFSET; ef.lastExecutionTime =
-  // loopStartTime - LOOP_PERIOD + ERROR_FLAG_LOOP_OFFSET;
+  imu.lastExecutionTime = loopStartTime - LOOP_PERIOD + IMU_LOOP_OFFSET;
+  gps.lastExecutionTime = loopStartTime - LOOP_PERIOD + GPS_LOOP_OFFSET;
+  // adc.lastExecutionTime = loopStartTime - LOOP_PERIOD + ADC_LOOP_OFFSET;
+  // ef.lastExecutionTime = loopStartTime - LOOP_PERIOD +
+  // ERROR_FLAG_LOOP_OFFSET;
   gyro.lastExecutionTime = loopStartTime - LOOP_PERIOD + GYRO_LOOP_OFFSET;
   pSensor.lastExecutionTime =
       loopStartTime - LOOP_PERIOD + PRESSURE_SENSOR_LOOP_OFFSET;
@@ -106,14 +106,14 @@ void loop() {
     // printer.printValue(0,adc.printSample());
     // printer.printValue(1,ef.printStates());
     printer.printValue(0, logger.printState());
-    // printer.printValue(3,gps.printState());
-    // printer.printValue(7,motor_driver.printState());
-    // printer.printValue(8,imu.printRollPitchHeading());
-    // printer.printValue(9,imu.printAccels());
-    printer.printValue(1, gyro.printRollPitchYaw());
-    printer.printValue(2, gyro.printAccels());
-    printer.printValue(3, gyro.printOrientation());
-    printer.printValue(4, pSensor.printPressure());
+    printer.printValue(1, gps.printState());
+    printer.printValue(2, motor_driver.printState());
+    printer.printValue(3, imu.printRollPitchHeading());
+    printer.printValue(4, imu.printAccels());
+    printer.printValue(5, gyro.printRollPitchYaw());
+    printer.printValue(6, gyro.printAccels());
+    printer.printValue(7, gyro.printOrientation());
+    printer.printValue(8, pSensor.printPressure());
     printer.printToSerial(); // To stop printing, just comment this line out
   }
 
@@ -143,10 +143,10 @@ void loop() {
   //   button_sampler.updateState();
   // }
 
-  // if ( currentTime-imu.lastExecutionTime > LOOP_PERIOD ) {
-  //   imu.lastExecutionTime = currentTime;
-  //   imu.read();     // blocking I2C calls
-  // }
+  if (currentTime - imu.lastExecutionTime > LOOP_PERIOD) {
+    imu.lastExecutionTime = currentTime;
+    imu.read(); // blocking I2C calls
+  }
 
   if (currentTime - gyro.lastExecutionTime > LOOP_PERIOD) {
     gyro.lastExecutionTime = currentTime;
@@ -158,12 +158,12 @@ void loop() {
     pSensor.read(); // blocking I2C calls
   }
 
-  // gps.read(&GPS); // blocking UART calls, need to check for UART every cycle
+  gps.read(&GPS); // blocking UART calls, need to check for UART every cycle
 
-  // if ( currentTime-led.lastExecutionTime > LOOP_PERIOD ) {
-  //   led.lastExecutionTime = currentTime;
-  //   led.flashLED(&gps.state);
-  // }
+  if (currentTime - led.lastExecutionTime > LOOP_PERIOD) {
+    led.lastExecutionTime = currentTime;
+    led.flashLED(&gps.state);
+  }
 
   if (currentTime - logger.lastExecutionTime > LOOP_PERIOD &&
       logger.keepLogging) {

@@ -29,18 +29,6 @@
 #define MOTOR_F_SPEED 24     // IN2
 // **********************************************************
 
-// ************ For Version 2.2 and earlier of the Motherboard
-// Motor A: pins 3,4 L
-#define MOTOR_A_FORWARD 3 // IN1
-#define MOTOR_A_REVERSE 4 // IN2
-// Motor B: pins 5,6 R
-#define MOTOR_B_FORWARD 5 // IN1
-#define MOTOR_B_REVERSE 6 // IN2
-// Motor C: pins 23,22 V
-#define MOTOR_C_FORWARD 23 // IN1
-#define MOTOR_C_REVERSE 22 // IN2
-// **********************************************************
-
 // Error Flags
 #define ERROR_FLAG_A 7
 #define ERROR_FLAG_B 8
