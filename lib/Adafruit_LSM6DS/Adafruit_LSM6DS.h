@@ -142,7 +142,7 @@ public:
   virtual ~Adafruit_LSM6DS();
 
   bool begin_I2C(uint8_t i2c_addr = LSM6DS_I2CADDR_DEFAULT,
-                 TwoWire *wire = &Wire, int32_t sensorID = 0);
+                 TwoWire *wire = &Wire1, int32_t sensorID = 0);
 
   bool begin_SPI(uint8_t cs_pin, SPIClass *theSPI = &SPI, int32_t sensorID = 0,
                  uint32_t frequency = 1000000);
