@@ -5,10 +5,6 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-typedef struct {
-  float z; // [m]
-} pressure_state_t;
-
 class PressureSensor : public DataSource {
 public:
   PressureSensor(void);
@@ -20,7 +16,7 @@ public:
   void read(void);
 
   // Latest reported pressure data is stored here
-  pressure_state_t state;
+  float depth;
 
   // prints state to serial
   String printPressure(void);

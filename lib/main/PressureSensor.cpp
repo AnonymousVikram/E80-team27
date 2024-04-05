@@ -4,31 +4,31 @@
 extern Printer printer;
 
 PressureSensor::PressureSensor(void) : DataSource("z", "float") {
-  state.z = 0.0F;
+  depth = 0.0F;
 }
 
 void PressureSensor::init(void) {
   Serial.print("Initializing Pressure Sensor... ");
   float curPres = analogRead(PRESSURE_SENSOR_PIN);
-  state.z = (curPres + pressure_cal_offset) * pressure_cal_slope;
-  Serial.println("done, cur pressure: " + String(state.z));
+  depth = (curPres + pressure_cal_offset) * pressure_cal_slope;
+  Serial.println("done, cur pressure: " + String(depth));
 }
 
 void PressureSensor::read(void) {
   float curPres = analogRead(PRESSURE_SENSOR_PIN);
   curPres = curPres / 1023.0 * 3.3;
-  state.z = (curPres + pressure_cal_offset) * pressure_cal_slope;
+  depth = (curPres + pressure_cal_offset) * pressure_cal_slope;
 }
 
 String PressureSensor::printPressure(void) {
   String PressureStr = "[Pressure Sensor] ";
   PressureStr += "Depth: ";
-  PressureStr += state.z;
+  PressureStr += depth;
   return PressureStr;
 }
 
 size_t PressureSensor::writeDataBytes(unsigned char *buffer, size_t idx) {
   float *data_slot = (float *)&buffer[idx];
-  data_slot[0] = state.z;
+  data_slot[0] = depth;
   return idx + sizeof(float);
 }

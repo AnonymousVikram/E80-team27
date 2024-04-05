@@ -1,8 +1,17 @@
 #include "StateEstimator.h"
+#include "FlowSensor.h"
+#include "PressureSensor.h"
 #include "Printer.h"
+#include "SensorGyro.h"
+#include "SensorIMU.h"
+#include "TimingOffsets.h"
 #include <math.h>
 
 extern Printer printer;
+extern SensorIMU imu;
+extern FlowSensor flowSensor;
+extern PressureSensor pressureSensor;
+extern SensorGyro gyro;
 
 inline float angleDiff(float a) {
   while (a < -PI)
@@ -13,89 +22,78 @@ inline float angleDiff(float a) {
 }
 
 StateEstimator::StateEstimator(void)
-    : DataSource("x,y,z,roll,pitch,yaw", "float,float,float,float,float") // from DataSource
+    : DataSource("x,y,z,roll,pitch,yaw",
+                 "float,float,float,float,float") // from DataSource
 {}
 
 void StateEstimator::init(void) {
-  state.x = 0;
-  state.y = 0;
-  state.z = 0;
-  state.roll = 0;
-  state.pitch = 0;
-  state.yaw = 0;
+  prevState.x = 0;
+  prevState.y = 0;
+  prevState.z = 0;
+  prevState.roll = 0;
+  prevState.pitch = 0;
+  prevState.yaw = 0;
 
-  next_state.x = 0;
-  next_state.y = 0;
-  next_state.z = 0;
-  next_state.roll = 0;
-  next_state.pitch = 0;
-  next_state.yaw = 0;
-
-  control_vals.vx = 0;
-  control_vals.vy = 0;
-  control_vals.vz = 0;
-  control_vals.v = 0;
-  control_vals.ax = 0;
-  control_vals.ay = 0;
-  control_vals.az = 0;
+  curState.x = 0;
+  curState.y = 0;
+  curState.z = 0;
+  curState.roll = 0;
+  curState.pitch = 0;
+  curState.yaw = 0;
 }
 
-// function to apply haversine to gps coordinates to get distance and heading
+void StateEstimator::updateState(void) {
+  // update the state based on velocity from flow sensor, depth from pressure
+  // sensor, and roll and yaw from gyro
+  float v = flowSensor.velocity;
+  float depth = pressureSensor.depth;
 
-void StateEstimator::haversine(float lat1, float lon1, float lat2, float lon2,
-                                 float *distance, float *heading) {
-  // convert to radians
-  lat1 = lat1 * PI / 180;
-  lon1 = lon1 * PI / 180;
-  lat2 = lat2 * PI / 180;
-  lon2 = lon2 * PI / 180;
+  // Gyro Vals
+  float roll = gyro.orientation.roll;
+  float pitch = gyro.orientation.pitch;
+  float yaw = gyro.orientation.yaw;
 
-  // haversine formula
-  float dlat = lat2 - lat1;
-  float dlon = lon2 - lon1;
-  float a =
-      pow(sin(dlat / 2), 2) + cos(lat1) * cos(lat2) * pow(sin(dlon / 2), 2);
-  *distance = 2 * RADIUS_OF_EARTH_M * asin(sqrt(a));
+  float ax = gyro.state.accelX;
+  float ay = gyro.state.accelY;
+  // float az = gyro.state.accelZ;
 
-  // heading formula
-  float y = sin(dlon) * cos(lat2);
-  float x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dlon);
-  *heading = atan2(y, x);
+  // IMU Vals
+  // float ax2 = imu.state.accelX;
+  // float ay2 = imu.state.accelY;
+  // float az2 = imu.state.accelZ;
+
+  // float roll2 = imu.state.roll;
+  // float yaw2 = imu.state.heading;
+
+  // Update state
+  prevState = curState;
+  curState.x = prevState.x + v * cos(yaw) * dt + ax * dt * dt / 2;
+  curState.y = prevState.y + v * sin(yaw) * dt + ay * dt * dt / 2;
+  curState.z = depth;
+  curState.roll = roll;
+  curState.pitch = pitch;
+  curState.yaw = yaw;
 }
-
-void StateEstimator::polarToCartesian(float distance, float heading, float *x,
-                                        float *y) {
-  *x = distance * cos(heading);
-  *y = distance * sin(heading);
-}
-
 
 String StateEstimator::printState(void) {
-  String currentState = "";
+  String currentState = "[StateEstimator]: ";
   int decimals = 2;
-  if (!gpsAcquired) {
-    currentState += "XY_State: Waiting to acquire more satellites...";
-  } else {
-    currentState += "XY_State: x: ";
-    currentState += String(state.x, decimals);
-    currentState += "[m], ";
-    currentState += "y: ";
-    currentState += String(state.y, decimals);
-    currentState += "[m], ";
-    currentState += "yaw: ";
-    currentState += String(state.yaw, decimals);
-    currentState += "[rad]; ";
-  }
+  currentState += "State: x: " + String(curState.x, decimals) + " [m], ";
+  currentState += "y: " + String(curState.y, decimals) + " [m], ";
+  currentState += "z: " + String(curState.z, decimals) + " [m], ";
+  currentState += "roll: " + String(curState.roll, decimals) + " [rad], ";
+  currentState += "pitch: " + String(curState.pitch, decimals) + " [rad], ";
+  currentState += "yaw: " + String(curState.yaw, decimals) + " [rad]; ";
   return currentState;
 }
 
 size_t StateEstimator::writeDataBytes(unsigned char *buffer, size_t idx) {
   float *data_slot = (float *)&buffer[idx];
-  data_slot[0] = state.x;
-  data_slot[1] = state.y;
-  data_slot[2] = state.z;
-  data_slot[3] = state.roll;
-  data_slot[4] = state.pitch;
-  data_slot[5] = state.yaw;
+  data_slot[0] = curState.x;
+  data_slot[1] = curState.y;
+  data_slot[2] = curState.z;
+  data_slot[3] = curState.roll;
+  data_slot[4] = curState.pitch;
+  data_slot[5] = curState.yaw;
   return idx + 6 * sizeof(float);
 }
