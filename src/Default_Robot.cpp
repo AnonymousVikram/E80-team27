@@ -10,15 +10,20 @@ Authors:
 
 #include <ADCSampler.h>
 #include <Arduino.h>
-#include <ErrorFlagSampler.h>
+// #include <ErrorFlagSampler.h>
+#include <FlowSensor.h>
 #include <Logger.h>
 #include <MotorDriver.h>
 #include <Pinouts.h>
 #include <PressureSensor.h>
 #include <Printer.h>
-#include <SensorGPS.h>
+#include <SensorGyro.h>
+
+// #include <SensorGPS.h>
+#include <RobotControl.h>
 #include <SensorIMU.h>
 #include <ServoDriver.h>
+#include <StateEstimator.h>
 #include <TimingOffsets.h>
 #include <Wire.h>
 #include <avr/interrupt.h>
@@ -26,63 +31,78 @@ Authors:
 
 #define UartSerial Serial1
 #define DELAY 0
-#include <GPSLockLED.h>
-#include <SensorGyro.h>
+// #include <GPSLockLED.h>
 
 /////////////////////////* Global Variables *////////////////////////
 
 MotorDriver motor_driver;
-SensorGPS gps;
-Adafruit_GPS GPS(&UartSerial);
+// SensorGPS gps;
+// Adafruit_GPS GPS(&UartSerial);
 ADCSampler adc;
 SensorIMU imu;
 Logger logger;
 Printer printer;
-GPSLockLED led;
+// GPSLockLED led;
 SensorGyro gyro;
+FlowSensor flow;
 PressureSensor pSensor;
 ServoDriver rudder;
+StateEstimator stateEstimator;
+RobotControl robotControl;
 
 // loop start recorder
 int loopStartTime;
 int currentTime;
 int current_way_point = 0;
 
+float waypoints[7][3] = {{0, 0, 0},  {0, 0, 5},   {20, 0, 5}, {20, 0, 0},
+                         {20, 0, 5}, {20, 20, 5}, {20, 20, 0}};
+
 ////////////////////////* Setup *////////////////////////////////
 
 void setup() {
 
   logger.include(&imu);
-  logger.include(&gps);
+  // logger.include(&gps);
   logger.include(&motor_driver);
-  // logger.include(&adc);
+  logger.include(&adc);
   // logger.include(&ef);
   logger.include(&gyro);
   logger.include(&pSensor);
+  logger.include(&flow);
+  logger.include(&rudder);
+  logger.include(&stateEstimator);
+  logger.include(&robotControl);
   logger.init();
 
   printer.init();
   // ef.init();
   imu.init();
   UartSerial.begin(9600);
-  gps.init(&GPS);
+  // gps.init(&GPS);
   motor_driver.init();
-  led.init();
+  // led.init();
   gyro.init();
   pSensor.init();
+  flow.init();
   rudder.init();
+  adc.init();
+  stateEstimator.init();
+  robotControl.init(7, waypoints);
 
   printer.printMessage("Starting main loop", 1);
   loopStartTime = millis();
   printer.lastExecutionTime = loopStartTime - LOOP_PERIOD + PRINTER_LOOP_OFFSET;
   imu.lastExecutionTime = loopStartTime - LOOP_PERIOD + IMU_LOOP_OFFSET;
-  gps.lastExecutionTime = loopStartTime - LOOP_PERIOD + GPS_LOOP_OFFSET;
-  // adc.lastExecutionTime = loopStartTime - LOOP_PERIOD + ADC_LOOP_OFFSET;
+  // gps.lastExecutionTime = loopStartTime - LOOP_PERIOD + GPS_LOOP_OFFSET;
+  adc.lastExecutionTime = loopStartTime - LOOP_PERIOD + ADC_LOOP_OFFSET;
   // ef.lastExecutionTime = loopStartTime - LOOP_PERIOD +
   // ERROR_FLAG_LOOP_OFFSET;
   gyro.lastExecutionTime = loopStartTime - LOOP_PERIOD + GYRO_LOOP_OFFSET;
   pSensor.lastExecutionTime =
       loopStartTime - LOOP_PERIOD + PRESSURE_SENSOR_LOOP_OFFSET;
+  flow.lastExecutionTime =
+      loopStartTime - LOOP_PERIOD + FLOW_SENSOR_LOOP_OFFSET;
   logger.lastExecutionTime = loopStartTime - LOOP_PERIOD + LOGGER_LOOP_OFFSET;
 }
 
@@ -96,15 +116,19 @@ void loop() {
     // printer.printValue(0,adc.printSample());
     // printer.printValue(1,ef.printStates());
     printer.printValue(0, logger.printState());
-    printer.printValue(1, gps.printState());
-    printer.printValue(2, motor_driver.printState());
-    printer.printValue(3, imu.printRollPitchHeading());
-    printer.printValue(4, imu.printAccels());
-    printer.printValue(5, gyro.printRollPitchYaw());
-    printer.printValue(6, gyro.printAccels());
-    printer.printValue(7, gyro.printOrientation());
-    printer.printValue(8, pSensor.printPressure());
-    printer.printValue(9, rudder.printState());
+    // printer.printValue(1, gps.printState());
+    printer.printValue(1, motor_driver.printState());
+    printer.printValue(2, imu.printRollPitchHeading());
+    // printer.printValue(3, imu.printAccels());
+    // printer.printValue(4, gyro.printRollPitchYaw());
+    printer.printValue(3, gyro.printAccels());
+    printer.printValue(4, gyro.printOrientation());
+    printer.printValue(5, pSensor.printPressure());
+    printer.printValue(6, flow.printFlow());
+    printer.printValue(6, rudder.printState());
+    printer.printValue(7, stateEstimator.printState());
+    printer.printValue(8, robotControl.printString());
+    printer.printValue(9, robotControl.printWaypoint());
     printer.printToSerial(); // To stop printing, just comment this line out
   }
 
@@ -123,16 +147,29 @@ void loop() {
     pSensor.read(); // blocking I2C calls
   }
 
-  gps.read(&GPS); // blocking UART calls, need to check for UART every cycle
-
-  if (currentTime - led.lastExecutionTime > LOOP_PERIOD) {
-    led.lastExecutionTime = currentTime;
-    led.flashLED(&gps.state);
+  if (currentTime - flow.lastExecutionTime > LOOP_PERIOD) {
+    flow.lastExecutionTime = currentTime;
+    flow.read(); // blocking I2C calls
   }
+
+  // gps.read(&GPS); // blocking UART calls, need to check for UART every cycle
+
+  // if (currentTime - led.lastExecutionTime > LOOP_PERIOD) {
+  //   led.lastExecutionTime = currentTime;
+  //   led.flashLED(&gps.state);
+  // }
 
   if (currentTime - logger.lastExecutionTime > LOOP_PERIOD &&
       logger.keepLogging) {
     logger.lastExecutionTime = currentTime;
     logger.log();
   }
+
+  if (currentTime - adc.lastExecutionTime > LOOP_PERIOD) {
+    adc.lastExecutionTime = currentTime;
+    adc.updateSample();
+  }
+
+  // no matter what the state, update the robot control
+  robotControl.update();
 }

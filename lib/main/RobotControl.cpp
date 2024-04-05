@@ -6,7 +6,7 @@
 #include <math.h>
 
 extern Printer printer;
-extern MotorDriver motorDriver;
+extern MotorDriver motor_driver;
 extern ServoDriver servoDriver;
 extern StateEstimator stateEstimator;
 
@@ -124,8 +124,8 @@ void RobotControl::update(void) {
   }
 
   // update the motor powers
-  motorDriver.drive(motorPowers[0], motorPowers[1], motorPowers[2],
-                    motorPowers[3], motorPowers[4], motorPowers[5]);
+  motor_driver.drive(motorPowers[0], motorPowers[1], motorPowers[2],
+                     motorPowers[3], motorPowers[4], motorPowers[5]);
 }
 
 String RobotControl::printString(void) {

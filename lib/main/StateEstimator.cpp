@@ -9,8 +9,8 @@
 
 extern Printer printer;
 extern SensorIMU imu;
-extern FlowSensor flowSensor;
-extern PressureSensor pressureSensor;
+extern FlowSensor flow;
+extern PressureSensor pSensor;
 extern SensorGyro gyro;
 
 inline float angleDiff(float a) {
@@ -45,8 +45,8 @@ void StateEstimator::init(void) {
 void StateEstimator::updateState(void) {
   // update the state based on velocity from flow sensor, depth from pressure
   // sensor, and roll and yaw from gyro
-  float v = flowSensor.velocity;
-  float depth = pressureSensor.depth;
+  float v = flow.velocity;
+  float depth = pSensor.depth;
 
   // Gyro Vals
   float roll = gyro.orientation.roll;

@@ -60,7 +60,7 @@ private:
 
   bool waiting = false;
   int waitBeg = 0;
-  
+
   float waypoints[][3];
 };
 #endif
