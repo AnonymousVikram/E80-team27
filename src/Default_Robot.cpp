@@ -18,6 +18,7 @@ Authors:
 #include <Printer.h>
 #include <SensorGPS.h>
 #include <SensorIMU.h>
+#include <ServoDriver.h>
 #include <TimingOffsets.h>
 #include <Wire.h>
 #include <avr/interrupt.h>
@@ -41,6 +42,7 @@ Printer printer;
 GPSLockLED led;
 SensorGyro gyro;
 PressureSensor pSensor;
+ServoDriver rudder;
 
 // loop start recorder
 int loopStartTime;
@@ -116,6 +118,8 @@ void loop() {
     printer.printValue(8, pSensor.printPressure());
     printer.printToSerial(); // To stop printing, just comment this line out
   }
+
+  
 
   // if ( currentTime-surface_control.lastExecutionTime > LOOP_PERIOD ) {
   //   motor_driver.drive(surface_control.uL,surface_control.uR,0);

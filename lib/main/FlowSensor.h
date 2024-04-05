@@ -1,5 +1,5 @@
-#ifndef FLOW_SENSOR_H
-#define FLOW_SENSOR_H
+#ifndef FLOW_SENSOR_H_INCLUDED
+#define FLOW_SENSOR_H_INCLUDED
 
 #include "DataSource.h"
 #include <Arduino.h>

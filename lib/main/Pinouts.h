@@ -38,6 +38,21 @@
 #define PRESSURE_SENSOR_PIN 14 // Teensy pin A00
 
 // Flow Sensor
-#define FLOW_SENSOR_PIN 26
+#define FLOW_SENSOR_PIN 26 // Teensy pin A12
+
+// Rudder Servo
+#define RUDDER_SERVO_PIN 15 // Teensy pin A01
+
+/*
+ * Note: the Gyro is connected to I2C Bus 1:
+ *  SCL: 16 (Teensy Pin A2)
+ *  SDA: 17 (Teensy Pin A3)
+ */
+
+/*
+ * Note: The Motherboard IMU is connected to I2C Bus 0:
+ *  SCL: 19 (Teensy Pin A5)
+ *  SDA: 18 (Teensy Pin A4)
+ */
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef SENSOR_GYRO_H
-#define SENSOR_GYRO_H
+#ifndef SENSOR_GYRO_H_INCLUDED
+#define SENSOR_GYRO_H_INCLUDED
 
 #include "DataSource.h"
 #include <Adafruit_ISM330DHCX.h>

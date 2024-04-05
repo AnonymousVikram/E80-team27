@@ -1,5 +1,5 @@
-#ifndef PRESSURE_SENSOR_H
-#define PRESSURE_SENSOR_H
+#ifndef PRESSURE_SENSOR_H_INCLUDED
+#define PRESSURE_SENSOR_H_INCLUDED
 
 #include "DataSource.h"
 #include <Arduino.h>
