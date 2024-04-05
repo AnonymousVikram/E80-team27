@@ -15,12 +15,13 @@ public:
 
   String printState(void);
 
-  void drive(int angle);
+  void drive(float angle);
 
-  int servoOut = 0;
+  float servoOut = 0;
 
   size_t writeDataBytes(unsigned char *buffer, size_t idx);
 
 private:
-  void setServoOut(int angle);
+  void setServoOut(float angle);
 };
+#endif

@@ -1,24 +1,39 @@
 #include "ServoDriver.h"
 #include "Printer.h"
+#include <cmath>
 extern Printer printer;
 
-ServoDriver::ServoDriver() : DataSource("angle", "int") { setServoOut(0); }
+ServoDriver::ServoDriver() : DataSource("angle", "float") { setServoOut(0); }
 
-void ServoDriver::init(void) { pinMode(RUDDER_SERVO_PIN, OUTPUT); }
+void ServoDriver::init(void) {
+  pinMode(RUDDER_SERVO_PIN, OUTPUT);
+  analogWriteFrequency(RUDDER_SERVO_PIN, 50);
+  apply();
+}
 
-void ServoDriver::apply(void) { analogWrite(RUDDER_SERVO_PIN, servoOut); }
+void ServoDriver::apply(void) {
+  analogWrite(RUDDER_SERVO_PIN, round(servoOut / 20.0 * 255.0));
+}
 
-void ServoDriver::drive(int angle) {
+void ServoDriver::drive(float angle) {
   setServoOut(angle);
   apply();
   printState();
 }
 
-void ServoDriver::setServoOut(int angle) {
-  servoOut = (int)((1.5 + (float)angle / 90.0 * 0.5) / 20.0 * 255);
+void ServoDriver::setServoOut(float angle) {
+  // angle = angle * 1.0 / 3.0;
+  servoOut = 0.01 * angle + 1.3;
+  constrain(servoOut, 1.0, 1.6);
+}
 
-  if (servoOut < 12.75)
-    servoOut = 12.75;
-  if (servoOut > 25.5)
-    servoOut = 25.5;
+String ServoDriver::printState(void) {
+  String printString = "[Servo]: Angle: " + String(servoOut);
+  return printString;
+}
+
+size_t ServoDriver::writeDataBytes(unsigned char *buffer, size_t idx) {
+  int *data_slot = (int *)&buffer[idx];
+  data_slot[0] = servoOut;
+  return idx + sizeof(int);
 }
