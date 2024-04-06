@@ -7,26 +7,26 @@
 
 // ************** For Version 3 of the Motherboard ***********
 // Motor A: pins 3,4 L
-#define MOTOR_A_DIRECTION 4 // IN1
+#define MOTOR_A_DIRECTION 4 // IN1 
 #define MOTOR_A_SPEED 3     // IN2
 // Motor B: pins 5,6 R
 #define MOTOR_B_DIRECTION 6 // IN1
 #define MOTOR_B_SPEED 5     // IN2
 // Motor C: pins 23,22 V
-#define MOTOR_C_DIRECTION 22 // IN1
-#define MOTOR_C_SPEED 23     // IN2
+#define MOTOR_C_DIRECTION 22 // IN1 // Teensy pin A08
+#define MOTOR_C_SPEED 23     // IN2 // Teensy pin A09
 
 // Motor D: pins 14, 15 L
-#define MOTOR_D_DIRECTION 15 // IN1
-#define MOTOR_D_SPEED 14     // IN2
+#define MOTOR_D_DIRECTION 15 // IN1 // Teensy pin A01
+#define MOTOR_D_SPEED 14     // IN2 // Teensy pin A00
 
 // Motor E: pins 28, 29 R
 #define MOTOR_E_DIRECTION 29 // IN1
-#define MOTOR_E_SPEED 28     // IN2
+#define MOTOR_E_SPEED 28     // IN2 
 
 // Motor F: pins 24, 33 V
 #define MOTOR_F_DIRECTION 33 // IN1
-#define MOTOR_F_SPEED 24     // IN2
+#define MOTOR_F_SPEED 24     // IN2 // Teensy pin A10
 // **********************************************************
 
 // Error Flags
@@ -35,13 +35,13 @@
 #define ERROR_FLAG_C 9
 
 // Depth Control
-#define PRESSURE_SENSOR_PIN 14 // Teensy pin A00
+#define PRESSURE_SENSOR_PIN 26 // Teensy pin A12
 
 // Flow Sensor
-#define FLOW_SENSOR_PIN 26 // Teensy pin A12
+#define FLOW_SENSOR_PIN 20 // Teensy pin A06 // break 20
 
 // Rudder Servo
-#define RUDDER_SERVO_PIN 15 // Teensy pin A01
+#define RUDDER_SERVO_PIN 25 // Teensy pin A11
 
 /*
  * Note: the Gyro is connected to I2C Bus 1:

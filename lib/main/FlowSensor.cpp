@@ -8,6 +8,7 @@ FlowSensor::FlowSensor(void) : DataSource("velocity", "float") {
 }
 
 void FlowSensor::init(void) {
+  pinMode(FLOW_SENSOR_PIN, INPUT);
   Serial.print("Initializing Flow Sensor... ");
   velocity = 0.0F;
   Serial.println("done");

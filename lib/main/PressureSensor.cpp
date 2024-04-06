@@ -8,6 +8,7 @@ PressureSensor::PressureSensor(void) : DataSource("z", "float") {
 }
 
 void PressureSensor::init(void) {
+  pinMode(PRESSURE_SENSOR_PIN, INPUT);
   Serial.print("Initializing Pressure Sensor... ");
   float curPres = analogRead(PRESSURE_SENSOR_PIN);
   depth = (curPres + pressure_cal_offset) * pressure_cal_slope;

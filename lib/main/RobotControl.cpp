@@ -130,11 +130,12 @@ void RobotControl::update(void) {
 
 String RobotControl::printString(void) {
   String output = "[RobotControl]: ";
-  output += "Current State: " + stateEstimator.printState() + "; ";
+  // output += "Current State: " + stateEstimator.printState() + "; ";
   output += "Current Motor Powers: ";
   for (int m = 0; m < NUM_MOTORS; m++) {
     output += String(motorPowers[m]) + ", ";
   }
+  output += "Current Servo Angle: " + String(servoDriver.servoOut) + ";";
   return output;
 }
 

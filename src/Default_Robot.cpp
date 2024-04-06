@@ -8,7 +8,7 @@ Authors:
     Apoorva Sharma (asharma@hmc.edu) '17 (contributed in 2016)
 */
 
-#include <ADCSampler.h>
+// #include <ADCSampler.h>
 #include <Arduino.h>
 // #include <ErrorFlagSampler.h>
 #include <FlowSensor.h>
@@ -38,7 +38,7 @@ Authors:
 MotorDriver motor_driver;
 // SensorGPS gps;
 // Adafruit_GPS GPS(&UartSerial);
-ADCSampler adc;
+// ADCSampler adc;
 SensorIMU imu;
 Logger logger;
 Printer printer;
@@ -65,7 +65,7 @@ void setup() {
   logger.include(&imu);
   // logger.include(&gps);
   logger.include(&motor_driver);
-  logger.include(&adc);
+  // logger.include(&adc);
   // logger.include(&ef);
   logger.include(&gyro);
   logger.include(&pSensor);
@@ -86,7 +86,7 @@ void setup() {
   pSensor.init();
   flow.init();
   rudder.init();
-  adc.init();
+  // adc.init();
   stateEstimator.init();
   robotControl.init(7, waypoints);
 
@@ -95,7 +95,7 @@ void setup() {
   printer.lastExecutionTime = loopStartTime - LOOP_PERIOD + PRINTER_LOOP_OFFSET;
   imu.lastExecutionTime = loopStartTime - LOOP_PERIOD + IMU_LOOP_OFFSET;
   // gps.lastExecutionTime = loopStartTime - LOOP_PERIOD + GPS_LOOP_OFFSET;
-  adc.lastExecutionTime = loopStartTime - LOOP_PERIOD + ADC_LOOP_OFFSET;
+  // adc.lastExecutionTime = loopStartTime - LOOP_PERIOD + ADC_LOOP_OFFSET;
   // ef.lastExecutionTime = loopStartTime - LOOP_PERIOD +
   // ERROR_FLAG_LOOP_OFFSET;
   gyro.lastExecutionTime = loopStartTime - LOOP_PERIOD + GYRO_LOOP_OFFSET;
@@ -110,6 +110,22 @@ void setup() {
 
 void loop() {
   currentTime = millis();
+
+  while (1) {
+    // change servo from -90 to 0 to 90 to calibrate
+    rudder.drive(0);
+    printer.printValue(0, rudder.printState());
+    printer.printToSerial();
+    delay(2000);
+    rudder.drive(PI / 2);
+    printer.printValue(0, rudder.printState());
+    printer.printToSerial();
+    delay(2000);
+    rudder.drive(-PI / 2);
+    printer.printValue(0, rudder.printState());
+    printer.printToSerial();
+    delay(2000);
+  }
 
   if (currentTime - printer.lastExecutionTime > LOOP_PERIOD) {
     printer.lastExecutionTime = currentTime;
@@ -165,10 +181,10 @@ void loop() {
     logger.log();
   }
 
-  if (currentTime - adc.lastExecutionTime > LOOP_PERIOD) {
-    adc.lastExecutionTime = currentTime;
-    adc.updateSample();
-  }
+  // if (currentTime - adc.lastExecutionTime > LOOP_PERIOD) {
+  //   adc.lastExecutionTime = currentTime;
+  //   adc.updateSample();
+  // }
 
   // no matter what the state, update the robot control
   robotControl.update();
