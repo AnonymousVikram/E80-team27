@@ -2,10 +2,10 @@
 #include "FlowSensor.h"
 #include "PressureSensor.h"
 #include "SensorGyro.h"
-#include "SensorIMU.h"
+// #include "SensorIMU.h"
 #include <math.h>
 
-extern SensorIMU imu;
+// extern SensorIMU imu;
 extern FlowSensor flow;
 extern PressureSensor pSensor;
 extern SensorGyro gyro;

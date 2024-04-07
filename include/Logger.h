@@ -3,11 +3,8 @@
 
 #include <Arduino.h>
 #include <SD.h>
-#include <fstream>
 #include <sstream>
-#include <stdio.h>
 #include <string>
-
 
 class Logger {
 public:
@@ -15,26 +12,33 @@ public:
 
   ~Logger(void);
 
-  void include(std::string headers);
+  void include(std::string header, bool endLine = false);
 
-  // Defines the filestream and writes headers
   void init(void);
 
-  // Writes data to the filestream
-  void writeData(std::string data);
+  void beginData(void);
+
+  void writeData(std::string data, bool endLine = false);
+
+  void endData(void);
 
   String printState(void);
 
   int lastExecutionTime = -1;
 
+  int flushCount = 0;
+
+  void close(void);
+
+  int writeTime = 0;
+
 private:
-  // stringstream to store headers, initalized with "Time, "
-  std::stringstream dataHeaders;
+  File file;
 
-  // fstream to write data to
-  std::ofstream fileStream;
+  std::stringstream headers;
+  std::stringstream data;
 
-  // counter for number of data points logged
   int dataCount = 0;
 };
+
 #endif

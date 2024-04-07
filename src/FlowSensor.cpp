@@ -1,5 +1,7 @@
 #include "FlowSensor.h"
 #include "Pinouts.h"
+#include <iomanip>
+#include <iostream>
 
 FlowSensor::FlowSensor(void) {}
 
@@ -23,6 +25,7 @@ String FlowSensor::printFlow(void) {
 }
 
 std::string FlowSensor::logData(void) {
+  // format velocity to 3 decimal places and add to data string
   std::string data = std::to_string(velocity) + ",";
   return data;
 }

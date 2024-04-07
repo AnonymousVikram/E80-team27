@@ -21,7 +21,7 @@ Authors:
 
 // #include <SensorGPS.h>
 #include <RobotControl.h>
-#include <SensorIMU.h>
+// #include <SensorIMU.h>
 #include <ServoDriver.h>
 #include <StateEstimator.h>
 #include <TimingOffsets.h>
@@ -36,7 +36,7 @@ Authors:
 /////////////////////////* Global Variables *////////////////////////
 
 MotorDriver motor_driver;
-SensorIMU imu;
+// SensorIMU imu;
 Logger logger;
 Printer printer;
 SensorGyro gyro;
@@ -58,19 +58,19 @@ float waypoints[7][3] = {{0, 0, 0},  {0, 0, 5},   {20, 0, 5}, {20, 0, 0},
 
 void setup() {
 
-  logger.include(imu.headers);
+  // logger.include(imu.headers);
   logger.include(motor_driver.headers);
   logger.include(gyro.headers);
   logger.include(pSensor.headers);
   logger.include(flow.headers);
   logger.include(rudder.headers);
   logger.include(stateEstimator.headers);
-  logger.include(robotControl.headers);
+  logger.include(robotControl.headers, true);
   logger.init();
 
   printer.init();
   // ef.init();
-  imu.init();
+  // imu.init();
   UartSerial.begin(9600);
   // gps.init(&GPS);
   motor_driver.init();
@@ -86,7 +86,7 @@ void setup() {
   printer.printMessage("Starting main loop", 1);
   loopStartTime = millis();
   printer.lastExecutionTime = loopStartTime - LOOP_PERIOD + PRINTER_LOOP_OFFSET;
-  imu.lastExecutionTime = loopStartTime - LOOP_PERIOD + IMU_LOOP_OFFSET;
+  // imu.lastExecutionTime = loopStartTime - LOOP_PERIOD + IMU_LOOP_OFFSET;
   // gps.lastExecutionTime = loopStartTime - LOOP_PERIOD + GPS_LOOP_OFFSET;
   // adc.lastExecutionTime = loopStartTime - LOOP_PERIOD + ADC_LOOP_OFFSET;
   // ef.lastExecutionTime = loopStartTime - LOOP_PERIOD +
@@ -100,33 +100,20 @@ void setup() {
 }
 
 //////////////////////////////* Loop */////////////////////////
-
+int counter = 0;
 void loop() {
-
-  float initVal = -PI / 2;
-  while (1) {
-    // change servo from -90 to 0 to 90 to calibrate
-    rudder.drive(initVal);
-    printer.printValue(0, rudder.printState());
-    printer.printToSerial();
-    delay(2000);
-    initVal += PI / 2;
-
-    if (initVal > PI / 2 + 0.5) {
-      initVal = -PI / 2;
-    }
-  }
 
   currentTime = millis();
 
-  if (currentTime - printer.lastExecutionTime > LOOP_PERIOD) {
+  if (currentTime - printer.lastExecutionTime > LOOP_PERIOD &&
+      logger.writeTime < 10000) {
     printer.lastExecutionTime = currentTime;
     // printer.printValue(0,adc.printSample());
     // printer.printValue(1,ef.printStates());
     printer.printValue(0, logger.printState());
     // printer.printValue(1, gps.printState());
     printer.printValue(1, motor_driver.printState());
-    printer.printValue(2, imu.printRollPitchHeading());
+    // printer.printValue(2, imu.printRollPitchHeading());
     // printer.printValue(3, imu.printAccels());
     // printer.printValue(4, gyro.printRollPitchYaw());
     printer.printValue(3, gyro.printAccels());
@@ -140,10 +127,10 @@ void loop() {
     printer.printToSerial(); // To stop printing, just comment this line out
   }
 
-  if (currentTime - imu.lastExecutionTime > LOOP_PERIOD) {
-    imu.lastExecutionTime = currentTime;
-    imu.read(); // blocking I2C calls
-  }
+  // if (currentTime - imu.lastExecutionTime > LOOP_PERIOD) {
+  //   imu.lastExecutionTime = currentTime;
+  //   imu.read(); // blocking I2C calls
+  // }
 
   if (currentTime - gyro.lastExecutionTime > LOOP_PERIOD) {
     gyro.lastExecutionTime = currentTime;
@@ -167,17 +154,19 @@ void loop() {
   //   led.flashLED(&gps.state);
   // }
 
-  if (currentTime - logger.lastExecutionTime > LOOP_PERIOD) {
+  if (currentTime - logger.lastExecutionTime > 20 / LOOP_PERIOD) {
+    counter += 1;
     logger.lastExecutionTime = currentTime;
-    logger.writeData(imu.logData());
+    logger.beginData();
+    // logger.writeData(imu.logData());
     logger.writeData(motor_driver.logData());
     logger.writeData(gyro.logData());
     logger.writeData(pSensor.logData());
     logger.writeData(flow.logData());
     logger.writeData(rudder.logData());
     logger.writeData(stateEstimator.logData());
-    logger.writeData(robotControl.logData());
-    logger.writeData("\n");
+    logger.writeData(robotControl.logData(), true);
+    logger.endData();
   }
 
   // if (currentTime - adc.lastExecutionTime > LOOP_PERIOD) {
@@ -187,4 +176,9 @@ void loop() {
 
   // no matter what the state, update the robot control
   robotControl.update();
+
+  if (millis() - logger.writeTime > 10000) {
+    logger.close();
+    logger.flushCount += 1;
+  }
 }
