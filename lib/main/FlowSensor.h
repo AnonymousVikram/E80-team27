@@ -1,11 +1,11 @@
 #ifndef FLOW_SENSOR_H_INCLUDED
 #define FLOW_SENSOR_H_INCLUDED
 
-#include "DataSource.h"
 #include <Arduino.h>
 #include <Wire.h>
+#include <string>
 
-class FlowSensor : public DataSource {
+class FlowSensor {
 public:
   FlowSensor(void);
 
@@ -16,15 +16,16 @@ public:
   void read(void);
 
   // Latest reported flow data is stored here
-  float velocity;
+  float velocity = 0;
 
   // prints state to serial
   String printFlow(void);
 
-  // from DataSource
-  size_t writeDataBytes(unsigned char *buffer, size_t idx);
-
   int lastExecutionTime = -1;
+
+  std::string headers = "Flow Sensor Velocity [m/s]";
+
+  std::string logData(void);
 
 private:
   float flow_cal_slope = 1.0F;

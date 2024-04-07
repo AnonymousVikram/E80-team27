@@ -1,11 +1,7 @@
 #include "PressureSensor.h"
 #include "Pinouts.h"
-#include "Printer.h"
-extern Printer printer;
 
-PressureSensor::PressureSensor(void) : DataSource("z", "float") {
-  depth = 0.0F;
-}
+PressureSensor::PressureSensor(void) {}
 
 void PressureSensor::init(void) {
   pinMode(PRESSURE_SENSOR_PIN, INPUT);
@@ -28,8 +24,7 @@ String PressureSensor::printPressure(void) {
   return PressureStr;
 }
 
-size_t PressureSensor::writeDataBytes(unsigned char *buffer, size_t idx) {
-  float *data_slot = (float *)&buffer[idx];
-  data_slot[0] = depth;
-  return idx + sizeof(float);
+std::string PressureSensor::logData(void) {
+  std::string data = std::to_string(depth) + ",";
+  return data;
 }

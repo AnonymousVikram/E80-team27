@@ -15,17 +15,15 @@
 
 // the minimum PWM amount that causes the motors to actually spin
 #define MOTOR_DEADZONE 34
-
-#include "DataSource.h"
 #include "Pinouts.h"
 #include <Arduino.h>
-
+#include <string>
 
 /*
  * MotorDriver handles the raw signals that are needed to drive the robot's
  * motors.
  */
-class MotorDriver : public DataSource {
+class MotorDriver {
 public:
   MotorDriver();
 
@@ -39,13 +37,16 @@ public:
   String printState(void);
 
   // helper function that sets motor command state and then applies it
-  void drive(int motorA_power, int motorB_power, int motorC_power, int motorD_power, int motorE_power, int motorF_power);
+  void drive(int motorA_power, int motorB_power, int motorC_power,
+             int motorD_power, int motorE_power, int motorF_power);
 
   // Range from -255 to +255 for full reverse or full forward
   int motorValues[NUM_MOTORS];
 
   // from DataSource
-  size_t writeDataBytes(unsigned char *buffer, size_t idx);
+  std::string logData(void);
+
+  std::string headers = "Motor A, Motor B, Motor C, Motor D, Motor E, Motor F";
 
 private:
   // pins for the motors

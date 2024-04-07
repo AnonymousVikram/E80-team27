@@ -1,50 +1,40 @@
-#ifndef __LOGGER_H__
-#define __LOGGER_H__
-#include <stdio.h>
+#ifndef LOGGER_H_INCLUDED
+#define LOGGER_H_INCLUDED
 
-#define LOG_FILENAME_BASE "log"
-#define LOG_FILENAME_BUFFERLEN 20
-#define HEADINGS_FILENAME_BASE "inf"
-// buffered logging
-// number of 512B blocks in the log file
-#define FILE_BLOCK_COUNT 8192 * 10 // should last over 10 min
-#define BYTES_PER_BLOCK 256
-// number of blocks in the buffer
-#define BUFFER_BLOCK_COUNT 5
-#define MAX_NUM_DATASOURCES 10
-
-#include "DataSource.h"
 #include <Arduino.h>
 #include <SD.h>
-#include <SPI.h>
+#include <fstream>
+#include <sstream>
+#include <stdio.h>
+#include <string>
 
 
 class Logger {
 public:
   Logger(void);
 
-  // include all dataSources before running init
-  void include(DataSource *source_p);
+  ~Logger(void);
 
-  // run after all dataSources have been registered
+  void include(std::string headers);
+
+  // Defines the filestream and writes headers
   void init(void);
 
-  // records all data at the time it's called to the SD
-  void log(void);
+  // Writes data to the filestream
+  void writeData(std::string data);
 
   String printState(void);
+
   int lastExecutionTime = -1;
-  bool keepLogging = false;
 
 private:
-  void padding(int number, byte width, String &str);
+  // stringstream to store headers, initalized with "Time, "
+  std::stringstream dataHeaders;
 
-  DataSource *sources[MAX_NUM_DATASOURCES];
-  unsigned int num_datasources;
-  char logfilename[LOG_FILENAME_BUFFERLEN];
-  char headingfilename[LOG_FILENAME_BUFFERLEN];
-  File file;
+  // fstream to write data to
+  std::ofstream fileStream;
 
-  uint32_t writtenBlocks = 0;
+  // counter for number of data points logged
+  int dataCount = 0;
 };
 #endif

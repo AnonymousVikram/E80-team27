@@ -1,11 +1,11 @@
 #ifndef SERVO_DRIVER_H_INCLUDED
 #define SERVO_DRIVER_H_INCLUDED
 
-#include "DataSource.h"
 #include "Pinouts.h"
 #include <Arduino.h>
+#include <string>
 
-class ServoDriver : public DataSource {
+class ServoDriver {
 public:
   ServoDriver();
 
@@ -18,8 +18,9 @@ public:
   void drive(float angle);
 
   float servoOut = 0;
+  std::string logData(void);
 
-  size_t writeDataBytes(unsigned char *buffer, size_t idx);
+  std::string headers = "Servo Angle [rad]";
 
 private:
   void setServoOut(float angle);

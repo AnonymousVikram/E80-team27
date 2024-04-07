@@ -36,13 +36,9 @@ Authors:
 /////////////////////////* Global Variables *////////////////////////
 
 MotorDriver motor_driver;
-// SensorGPS gps;
-// Adafruit_GPS GPS(&UartSerial);
-// ADCSampler adc;
 SensorIMU imu;
 Logger logger;
 Printer printer;
-// GPSLockLED led;
 SensorGyro gyro;
 FlowSensor flow;
 PressureSensor pSensor;
@@ -62,17 +58,14 @@ float waypoints[7][3] = {{0, 0, 0},  {0, 0, 5},   {20, 0, 5}, {20, 0, 0},
 
 void setup() {
 
-  logger.include(&imu);
-  // logger.include(&gps);
-  logger.include(&motor_driver);
-  // logger.include(&adc);
-  // logger.include(&ef);
-  logger.include(&gyro);
-  logger.include(&pSensor);
-  logger.include(&flow);
-  logger.include(&rudder);
-  logger.include(&stateEstimator);
-  logger.include(&robotControl);
+  logger.include(imu.headers);
+  logger.include(motor_driver.headers);
+  logger.include(gyro.headers);
+  logger.include(pSensor.headers);
+  logger.include(flow.headers);
+  logger.include(rudder.headers);
+  logger.include(stateEstimator.headers);
+  logger.include(robotControl.headers);
   logger.init();
 
   printer.init();
@@ -174,10 +167,17 @@ void loop() {
   //   led.flashLED(&gps.state);
   // }
 
-  if (currentTime - logger.lastExecutionTime > LOOP_PERIOD &&
-      logger.keepLogging) {
+  if (currentTime - logger.lastExecutionTime > LOOP_PERIOD) {
     logger.lastExecutionTime = currentTime;
-    logger.log();
+    logger.writeData(imu.logData());
+    logger.writeData(motor_driver.logData());
+    logger.writeData(gyro.logData());
+    logger.writeData(pSensor.logData());
+    logger.writeData(flow.logData());
+    logger.writeData(rudder.logData());
+    logger.writeData(stateEstimator.logData());
+    logger.writeData(robotControl.logData());
+    logger.writeData("\n");
   }
 
   // if (currentTime - adc.lastExecutionTime > LOOP_PERIOD) {

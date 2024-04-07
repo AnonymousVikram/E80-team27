@@ -1,16 +1,11 @@
 #include "FlowSensor.h"
 #include "Pinouts.h"
-#include "Printer.h"
-extern Printer printer;
 
-FlowSensor::FlowSensor(void) : DataSource("velocity", "float") {
-  velocity = 0.0F;
-}
+FlowSensor::FlowSensor(void) {}
 
 void FlowSensor::init(void) {
-  pinMode(FLOW_SENSOR_PIN, INPUT);
   Serial.print("Initializing Flow Sensor... ");
-  velocity = 0.0F;
+  pinMode(FLOW_SENSOR_PIN, INPUT);
   Serial.println("done");
 }
 
@@ -27,14 +22,14 @@ String FlowSensor::printFlow(void) {
   return FlowStr;
 }
 
-size_t FlowSensor::writeDataBytes(unsigned char *buffer, size_t idx) {
-  float *data_slot = (float *)&buffer[idx];
-  data_slot[0] = velocity;
-  return idx + sizeof(float);
+std::string FlowSensor::logData(void) {
+  std::string data = std::to_string(velocity) + ",";
+  return data;
 }
 
 float FlowSensor::Lmin_to_mps(float rate) {
-  // return (rate * flow_cal_slope + flow_cal_offset) / pipe_cs_area / 1000.0F *
+  // return (rate * flow_cal_slope + flow_cal_offset) / pipe_cs_area / 1000.0F
+  // *
   //  60.0F;
   return rate;
 }

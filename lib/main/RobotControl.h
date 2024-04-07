@@ -6,20 +6,20 @@
 #define depth_threshold 0.1
 #define waitTime 5000
 
-#include "DataSource.h"
 #include "MotorDriver.h"
 #include "Pinouts.h"
 #include "Printer.h"
 #include "ServoDriver.h"
 #include "StateEstimator.h"
 #include <Arduino.h>
+#include <string>
 
 extern Printer printer;
 extern MotorDriver motorDriver;
 extern ServoDriver servoDriver;
 extern StateEstimator stateEstimator;
 
-class RobotControl : public DataSource {
+class RobotControl {
 public:
   RobotControl(void);
   void init(const int numWaypoints, const float waypoints[][3]);
@@ -28,9 +28,14 @@ public:
   String printString(void);
   String printWaypoint(void);
 
-  size_t writeDataBytes(unsigned char *buffer, size_t idx);
-
   int lastExecutionTime = -1;
+
+  std::string headers =
+      "Motor 1 Command [us],Motor 2 Command [us],Motor 3 Command [us],Motor 4 "
+      "Command [us],Motor 5 Command [us],Motor 6 Command [us], Rudder Command "
+      "[us], Waypoint X [m], Waypoint Y [m], Waypoint Z [m], Waiting [bool]";
+
+  std::string logData(void);
 
 private:
   state_t *state = &stateEstimator.curState;

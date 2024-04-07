@@ -1,11 +1,8 @@
 #include "SensorGyro.h"
 #include "Printer.h"
 #include "TimingOffsets.h"
-extern Printer printer;
 
-SensorGyro::SensorGyro(void)
-    : DataSource("rollGyro,pitchGyro,headingGyro,gyroX,gyroY,gyroZ",
-                 "float,float,float,float,float,float") {}
+SensorGyro::SensorGyro(void) {}
 
 void SensorGyro::init(void) {
   Serial.print("Initializing Gyro... ");
@@ -78,13 +75,13 @@ String SensorGyro::printOrientation(void) {
   return GyroStr;
 }
 
-size_t SensorGyro::writeDataBytes(unsigned char *buffer, size_t idx) {
-  float *data_slot = (float *)&buffer[idx];
-  data_slot[0] = state.droll;
-  data_slot[1] = state.dpitch;
-  data_slot[2] = state.dheading;
-  data_slot[3] = state.accelX;
-  data_slot[4] = state.accelY;
-  data_slot[5] = state.accelZ;
-  return idx + 6 * sizeof(float);
+std::string SensorGyro::logData(void) {
+  std::string logString =
+      std::to_string(state.accelX) + "," + std::to_string(state.accelY) + "," +
+      std::to_string(state.accelZ) + "," + std::to_string(state.droll) + "," +
+      std::to_string(state.dpitch) + "," + std::to_string(state.dheading) +
+      "," + std::to_string(orientation.roll) + "," +
+      std::to_string(orientation.pitch) + "," +
+      std::to_string(orientation.yaw) + ",";
+  return logString;
 }

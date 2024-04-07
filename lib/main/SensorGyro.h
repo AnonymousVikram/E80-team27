@@ -1,10 +1,10 @@
 #ifndef SENSOR_GYRO_H_INCLUDED
 #define SENSOR_GYRO_H_INCLUDED
 
-#include "DataSource.h"
 #include <Adafruit_ISM330DHCX.h>
 #include <Arduino.h>
 #include <Wire.h>
+#include <string>
 
 #define GYRO_THRESHOLD 0.01F
 
@@ -23,7 +23,7 @@ typedef struct {
   float yaw;   // [degrees]
 } orientation_t;
 
-class SensorGyro : public DataSource {
+class SensorGyro {
 public:
   SensorGyro(void);
 
@@ -42,10 +42,13 @@ public:
   String printAccels(void);
   String printOrientation(void);
 
-  // from DataSource
-  size_t writeDataBytes(unsigned char *buffer, size_t idx);
+  std::string logData(void);
 
   int lastExecutionTime = -1;
+
+  std::string headers =
+      "Accel X [mg],Accel Y [mg],Accel Z [mg],dRoll [deg/s],dPitch "
+      "[deg/s],dHeading [deg/s],Roll [deg],Pitch [deg],Yaw [deg]";
 
 private:
   // Create sensor instance

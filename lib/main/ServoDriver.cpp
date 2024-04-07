@@ -1,9 +1,7 @@
 #include "ServoDriver.h"
-#include "Printer.h"
 #include <cmath>
-extern Printer printer;
 
-ServoDriver::ServoDriver() : DataSource("angle", "float") { setServoOut(0); }
+ServoDriver::ServoDriver() {}
 
 void ServoDriver::init(void) {
   pinMode(RUDDER_SERVO_PIN, OUTPUT);
@@ -33,8 +31,7 @@ String ServoDriver::printState(void) {
   return printString;
 }
 
-size_t ServoDriver::writeDataBytes(unsigned char *buffer, size_t idx) {
-  int *data_slot = (int *)&buffer[idx];
-  data_slot[0] = servoOut;
-  return idx + sizeof(int);
+std::string ServoDriver::logData(void) {
+  std::string data = std::to_string(servoOut) + ",";
+  return data;
 }

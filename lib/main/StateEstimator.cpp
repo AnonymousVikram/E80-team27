@@ -1,13 +1,10 @@
 #include "StateEstimator.h"
 #include "FlowSensor.h"
 #include "PressureSensor.h"
-#include "Printer.h"
 #include "SensorGyro.h"
 #include "SensorIMU.h"
-#include "TimingOffsets.h"
 #include <math.h>
 
-extern Printer printer;
 extern SensorIMU imu;
 extern FlowSensor flow;
 extern PressureSensor pSensor;
@@ -21,10 +18,7 @@ inline float angleDiff(float a) {
   return a;
 }
 
-StateEstimator::StateEstimator(void)
-    : DataSource("x,y,z,roll,pitch,yaw",
-                 "float,float,float,float,float") // from DataSource
-{}
+StateEstimator::StateEstimator(void) {}
 
 void StateEstimator::init(void) {
   prevState.x = 0;
@@ -87,13 +81,10 @@ String StateEstimator::printState(void) {
   return currentState;
 }
 
-size_t StateEstimator::writeDataBytes(unsigned char *buffer, size_t idx) {
-  float *data_slot = (float *)&buffer[idx];
-  data_slot[0] = curState.x;
-  data_slot[1] = curState.y;
-  data_slot[2] = curState.z;
-  data_slot[3] = curState.roll;
-  data_slot[4] = curState.pitch;
-  data_slot[5] = curState.yaw;
-  return idx + 6 * sizeof(float);
+std::string StateEstimator::logData(void) {
+  std::string logString =
+      std::to_string(curState.x) + "," + std::to_string(curState.y) + "," +
+      std::to_string(curState.z) + "," + std::to_string(curState.roll) + "," +
+      std::to_string(curState.pitch) + "," + std::to_string(curState.yaw) + ",";
+  return logString;
 }

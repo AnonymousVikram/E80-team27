@@ -1,12 +1,10 @@
-#ifndef STATE_ESTIMATOR_HEADER
-#define STATE_ESTIMATOR_HEADER
+#ifndef STATE_ESTIMATOR_H_INCLUDED
+#define STATE_ESTIMATOR_H_INCLUDED
 
-#include <Arduino.h>
-
-#include "DataSource.h"
-#include <SensorGPS.h>
-#include <SensorIMU.h>
 #include "TimingOffsets.h"
+#include <Arduino.h>
+#include <SensorIMU.h>
+#include <string>
 
 // #define RADIUS_OF_EARTH_M 6371000 // [m]
 
@@ -24,7 +22,7 @@ typedef struct {
  * incorporating measurements of the system outputs from the various
  * sensors like IMU and GPS, as well as the control inputs to the system.
  */
-class StateEstimator : public DataSource {
+class StateEstimator {
 public:
   StateEstimator(void);
 
@@ -38,10 +36,14 @@ public:
   void updateState(void);
   String printState(void);
 
-  // from DataSource
-  size_t writeDataBytes(unsigned char *buffer, size_t idx);
+  std::string logData(void);
 
   int lastExecutionTime = -1;
+
+  std::string headers =
+      "State Estimator X [m],State Estimator Y [m],State Estimator Z [m],State "
+      "Estimator Roll [rad],State Estimator Pitch [rad],State Estimator Yaw "
+      "[rad]";
 
 private:
   float dt = LOOP_PERIOD / 1000.0; // [s]

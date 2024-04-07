@@ -1,18 +1,14 @@
 #include "RobotControl.h"
 #include "MotorDriver.h"
-#include "Printer.h"
 #include "ServoDriver.h"
 #include "StateEstimator.h"
 #include <math.h>
 
-extern Printer printer;
 extern MotorDriver motor_driver;
 extern ServoDriver rudder;
 extern StateEstimator stateEstimator;
 
-RobotControl::RobotControl(void)
-    : DataSource("motorA,motorB,motorC,motorD,motorE,motorF",
-                 "int,int,int,int,int,int") {
+RobotControl::RobotControl(void) {
   for (int m = 0; m < NUM_MOTORS; m++) {
     motorPowers[m] = 0;
   }
@@ -86,24 +82,27 @@ void RobotControl::update(void) {
     motorPowers[3] = 0;
     motorPowers[4] = 0;
     motorPowers[5] = diveControl;
+    rudder.servoOut = 0;
   } else if (yawError > yaw_threshold) {
-    motorPowers[0] = -yawControl;
-    motorPowers[1] = yawControl;
+    motorPowers[0] = 128;
+    motorPowers[1] = 128;
     motorPowers[2] = diveControl;
-    motorPowers[3] = -yawControl;
-    motorPowers[4] = yawControl;
+    motorPowers[3] = 128;
+    motorPowers[4] = 128;
     motorPowers[5] = diveControl;
+    rudder.servoOut = yawControl;
   } else {
     // combine everything to navigate to the waypoint
     // motor powers 0 and 3 are the left motors
     // motor powers 1 and 4 are the right motors
     // motor powers 2 and 5 are the vertical motors
-    motorPowers[0] = throttleControl - rollControl - yawControl;
-    motorPowers[1] = throttleControl + rollControl + yawControl;
+    motorPowers[0] = throttleControl - rollControl;
+    motorPowers[1] = throttleControl + rollControl;
     motorPowers[2] = throttleControl + diveControl;
-    motorPowers[3] = throttleControl + rollControl - yawControl;
-    motorPowers[4] = throttleControl - rollControl + yawControl;
+    motorPowers[3] = throttleControl + rollControl;
+    motorPowers[4] = throttleControl - rollControl;
     motorPowers[5] = throttleControl + diveControl;
+    rudder.servoOut = yawControl;
   }
 
   if (waiting) {
@@ -116,11 +115,6 @@ void RobotControl::update(void) {
     motorPowers[3] = -throttleKp * ax;
     motorPowers[4] = -throttleKp * ax;
     motorPowers[5] = -diveKp * az;
-  }
-
-  // limit the motor powers
-  for (int m = 0; m < NUM_MOTORS; m++) {
-    motorPowers[m] = constrain(motorPowers[m], -250, 250);
   }
 
   // update the motor powers
@@ -150,12 +144,13 @@ String RobotControl::printWaypoint(void) {
   return output;
 }
 
-size_t RobotControl::writeDataBytes(unsigned char *buffer, size_t idx) {
-  int *int_slot = (int *)&buffer[idx];
-  for (int m = 0; m < NUM_MOTORS; m++) {
-    int_slot[m] = motorPowers[m];
-  }
-  return idx + NUM_MOTORS * sizeof(int);
+std::string RobotControl::logData(void) {
+  std::string output = "";
+  output += std::to_string(waypoints[currentWaypoint][0]) + ",";
+  output += std::to_string(waypoints[currentWaypoint][1]) + ",";
+  output += std::to_string(waypoints[currentWaypoint][2]) + ",";
+  output += std::to_string(waiting) + ",";
+  return output;
 }
 
 float RobotControl::distanceToWaypoint(float x, float y, float z) {
