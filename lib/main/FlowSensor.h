@@ -27,7 +27,7 @@ public:
   int lastExecutionTime = -1;
 
 private:
-  float flow_cal_slope = 0.0F;
+  float flow_cal_slope = 1.0F;
   float flow_cal_offset = 0.0F;
   float pipe_cs_area = 0.5F * 0.0254F; // cross sectional area of pipe [m^2]
 

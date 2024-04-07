@@ -109,23 +109,22 @@ void setup() {
 //////////////////////////////* Loop */////////////////////////
 
 void loop() {
-  currentTime = millis();
 
+  float initVal = -PI / 2;
   while (1) {
     // change servo from -90 to 0 to 90 to calibrate
-    rudder.drive(0);
+    rudder.drive(initVal);
     printer.printValue(0, rudder.printState());
     printer.printToSerial();
     delay(2000);
-    rudder.drive(PI / 2);
-    printer.printValue(0, rudder.printState());
-    printer.printToSerial();
-    delay(2000);
-    rudder.drive(-PI / 2);
-    printer.printValue(0, rudder.printState());
-    printer.printToSerial();
-    delay(2000);
+    initVal += PI / 2;
+
+    if (initVal > PI / 2 + 0.5) {
+      initVal = -PI / 2;
+    }
   }
+
+  currentTime = millis();
 
   if (currentTime - printer.lastExecutionTime > LOOP_PERIOD) {
     printer.lastExecutionTime = currentTime;
@@ -141,10 +140,10 @@ void loop() {
     printer.printValue(4, gyro.printOrientation());
     printer.printValue(5, pSensor.printPressure());
     printer.printValue(6, flow.printFlow());
-    printer.printValue(6, rudder.printState());
-    printer.printValue(7, stateEstimator.printState());
-    printer.printValue(8, robotControl.printString());
-    printer.printValue(9, robotControl.printWaypoint());
+    printer.printValue(7, rudder.printState());
+    printer.printValue(8, stateEstimator.printState());
+    printer.printValue(9, robotControl.printString());
+    printer.printValue(10, robotControl.printWaypoint());
     printer.printToSerial(); // To stop printing, just comment this line out
   }
 

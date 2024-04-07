@@ -7,7 +7,7 @@
 
 extern Printer printer;
 extern MotorDriver motor_driver;
-extern ServoDriver servoDriver;
+extern ServoDriver rudder;
 extern StateEstimator stateEstimator;
 
 RobotControl::RobotControl(void)
@@ -135,7 +135,7 @@ String RobotControl::printString(void) {
   for (int m = 0; m < NUM_MOTORS; m++) {
     output += String(motorPowers[m]) + ", ";
   }
-  output += "Current Servo Angle: " + String(servoDriver.servoOut) + ";";
+  output += "Current Servo Angle: " + String(rudder.servoOut) + ";";
   return output;
 }
 

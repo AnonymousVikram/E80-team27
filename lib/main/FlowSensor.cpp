@@ -34,6 +34,7 @@ size_t FlowSensor::writeDataBytes(unsigned char *buffer, size_t idx) {
 }
 
 float FlowSensor::Lmin_to_mps(float rate) {
-  return rate * flow_cal_slope +
-         flow_cal_offset / pipe_cs_area / 1000.0F * 60.0F;
+  // return (rate * flow_cal_slope + flow_cal_offset) / pipe_cs_area / 1000.0F *
+  //  60.0F;
+  return rate;
 }

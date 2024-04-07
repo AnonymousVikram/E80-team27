@@ -23,8 +23,9 @@ void ServoDriver::drive(float angle) {
 
 void ServoDriver::setServoOut(float angle) {
   // angle = angle * 1.0 / 3.0;
-  servoOut = 0.497776 * angle + 1.12143;
-  servoOut = constrain(servoOut, 0.6, 1.6);
+  servoOut = 0.634011 * angle + 1.16311;
+  // servoOut = angle;
+  servoOut = constrain(servoOut, 0.6, 1.83);
 }
 
 String ServoDriver::printState(void) {
