@@ -3,7 +3,10 @@
 #include "PressureSensor.h"
 #include "SensorGyro.h"
 // #include "SensorIMU.h"
+#include "FloatFormatter.h"
 #include <math.h>
+
+extern FloatFormatter formatter;
 
 // extern SensorIMU imu;
 extern FlowSensor flow;
@@ -82,9 +85,9 @@ String StateEstimator::printState(void) {
 }
 
 std::string StateEstimator::logData(void) {
-  std::string logString =
-      std::to_string(curState.x) + "," + std::to_string(curState.y) + "," +
-      std::to_string(curState.z) + "," + std::to_string(curState.roll) + "," +
-      std::to_string(curState.pitch) + "," + std::to_string(curState.yaw) + ",";
-  return logString;
+  return formatter.format(curState.x) + "," + formatter.format(curState.y) +
+         "," + formatter.format(curState.z) + "," +
+         formatter.format(curState.roll) + "," +
+         formatter.format(curState.pitch) + "," +
+         formatter.format(curState.yaw) + ",";
 }

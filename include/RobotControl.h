@@ -31,9 +31,7 @@ public:
   int lastExecutionTime = -1;
 
   std::string headers =
-      "Motor 1 Command [us],Motor 2 Command [us],Motor 3 Command [us],Motor 4 "
-      "Command [us],Motor 5 Command [us],Motor 6 Command [us], Rudder Command "
-      "[us], Waypoint X [m], Waypoint Y [m], Waypoint Z [m], Waiting [bool]";
+      "Waypoint X [m], Waypoint Y [m], Waypoint Z [m], Waiting [bool]";
 
   std::string logData(void);
 

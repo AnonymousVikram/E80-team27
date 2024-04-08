@@ -4,7 +4,6 @@
 // for PWM and LOW to change direction. The code below, along with the .h file
 // and the Pinouts.h file were changed. Erik Spjut August 2021.
 #include "MotorDriver.h"
-
 MotorDriver::MotorDriver() {
   for (int m = 0; m < NUM_MOTORS; m++) {
     motorValues[m] = 0;

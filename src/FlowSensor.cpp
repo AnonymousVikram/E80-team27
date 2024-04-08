@@ -1,7 +1,9 @@
 #include "FlowSensor.h"
+#include "FloatFormatter.h"
 #include "Pinouts.h"
-#include <iomanip>
 #include <iostream>
+
+extern FloatFormatter formatter;
 
 FlowSensor::FlowSensor(void) {}
 
@@ -24,11 +26,7 @@ String FlowSensor::printFlow(void) {
   return FlowStr;
 }
 
-std::string FlowSensor::logData(void) {
-  // format velocity to 3 decimal places and add to data string
-  std::string data = std::to_string(velocity) + ",";
-  return data;
-}
+std::string FlowSensor::logData(void) { return formatter.format(velocity); }
 
 float FlowSensor::Lmin_to_mps(float rate) {
   // return (rate * flow_cal_slope + flow_cal_offset) / pipe_cs_area / 1000.0F

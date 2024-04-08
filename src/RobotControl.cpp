@@ -1,4 +1,5 @@
 #include "RobotControl.h"
+#include "FloatFormatter.h"
 #include "MotorDriver.h"
 #include "ServoDriver.h"
 #include "StateEstimator.h"
@@ -7,6 +8,7 @@
 extern MotorDriver motor_driver;
 extern ServoDriver rudder;
 extern StateEstimator stateEstimator;
+extern FloatFormatter formatter;
 
 RobotControl::RobotControl(void) {
   for (int m = 0; m < NUM_MOTORS; m++) {
@@ -145,12 +147,10 @@ String RobotControl::printWaypoint(void) {
 }
 
 std::string RobotControl::logData(void) {
-  std::string output = "";
-  output += std::to_string(waypoints[currentWaypoint][0]) + ",";
-  output += std::to_string(waypoints[currentWaypoint][1]) + ",";
-  output += std::to_string(waypoints[currentWaypoint][2]) + ",";
-  output += std::to_string(waiting) + ",";
-  return output;
+  return formatter.format(waypoints[currentWaypoint][0]) + "," +
+         formatter.format(waypoints[currentWaypoint][1]) + "," +
+         formatter.format(waypoints[currentWaypoint][2]) + "," +
+         formatter.format(waiting) + ",";
 }
 
 float RobotControl::distanceToWaypoint(float x, float y, float z) {

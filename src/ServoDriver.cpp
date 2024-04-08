@@ -1,5 +1,9 @@
 #include "ServoDriver.h"
+#include "FloatFormatter.h"
 #include <cmath>
+#include <iomanip>
+
+extern FloatFormatter formatter;
 
 ServoDriver::ServoDriver() {}
 
@@ -31,7 +35,4 @@ String ServoDriver::printState(void) {
   return printString;
 }
 
-std::string ServoDriver::logData(void) {
-  std::string data = std::to_string(servoOut) + ",";
-  return data;
-}
+std::string ServoDriver::logData(void) { return formatter.format(servoOut); }

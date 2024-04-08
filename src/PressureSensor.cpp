@@ -1,5 +1,8 @@
 #include "PressureSensor.h"
+#include "FloatFormatter.h"
 #include "Pinouts.h"
+
+extern FloatFormatter formatter;
 
 PressureSensor::PressureSensor(void) {}
 
@@ -24,7 +27,4 @@ String PressureSensor::printPressure(void) {
   return PressureStr;
 }
 
-std::string PressureSensor::logData(void) {
-  std::string data = std::to_string(depth) + ",";
-  return data;
-}
+std::string PressureSensor::logData(void) { return formatter.format(depth); }

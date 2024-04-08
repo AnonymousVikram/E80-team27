@@ -1,12 +1,14 @@
 #include "SensorGyro.h"
+#include "FloatFormatter.h"
 #include "Printer.h"
 #include "TimingOffsets.h"
+
+extern FloatFormatter formatter;
 
 SensorGyro::SensorGyro(void) {}
 
 void SensorGyro::init(void) {
   Serial.print("Initializing Gyro... ");
-
   // Creating i2c interface
   myGyro.begin_I2C();
 
@@ -76,12 +78,11 @@ String SensorGyro::printOrientation(void) {
 }
 
 std::string SensorGyro::logData(void) {
-  std::string logString =
-      std::to_string(state.accelX) + "," + std::to_string(state.accelY) + "," +
-      std::to_string(state.accelZ) + "," + std::to_string(state.droll) + "," +
-      std::to_string(state.dpitch) + "," + std::to_string(state.dheading) +
-      "," + std::to_string(orientation.roll) + "," +
-      std::to_string(orientation.pitch) + "," +
-      std::to_string(orientation.yaw) + ",";
-  return logString;
+  return formatter.format(state.accelX) + "," + formatter.format(state.accelY) +
+         "," + formatter.format(state.accelZ) + "," +
+         formatter.format(state.droll) + "," + formatter.format(state.dpitch) +
+         "," + formatter.format(state.dheading) + "," +
+         formatter.format(orientation.roll) + "," +
+         formatter.format(orientation.pitch) + "," +
+         formatter.format(orientation.yaw) + ",";
 }

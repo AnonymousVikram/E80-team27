@@ -1,7 +1,4 @@
 #include "Logger.h"
-#include "Printer.h"
-
-extern Printer printer;
 
 Logger::Logger(void) {
   writeTime = millis();
@@ -9,19 +6,12 @@ Logger::Logger(void) {
   headers << "Time, ";
 }
 
-Logger::~Logger(void) { close(); }
-
-void Logger::close(void) {
+Logger::~Logger(void) {
   file.flush();
   file.close();
 }
 
-void Logger::include(std::string header, bool endline) {
-  if (endline)
-    headers << header << "\n";
-  else
-    headers << header << ",";
-}
+void Logger::include(std::string header) { headers << header << ","; }
 
 void Logger::init(void) {
   // initialize the SD card
@@ -54,64 +44,37 @@ void Logger::init(void) {
   // write the header to the file
   std::string header = headers.str();
   header.pop_back();
-  file.write(header.c_str());
-  file.write("\n");
+  file.print((header + "\n").c_str());
 }
 
-void Logger::beginData(void) {
+void Logger::write(std::string data) {
+  // write the data to the file
+  // file.write(data.c_str());
+
   writeTime = writeTime - millis();
-  // begin the data string
-  // file.write(millis() << ", ");
-  file.write(String(millis() + ",").c_str());
-}
+  file.print(String(millis() + ",").c_str());
+  data.pop_back();
+  file.print((data + "\n").c_str());
 
-void Logger::writeData(std::string inData, bool endLine) {
-  // write the data to the buffer
-  // file.write(inData + ", ");
-  if (endLine) {
-    inData.pop_back();
-    file.write((inData + "\n").c_str());
-  } else
-    file.write((inData + ",").c_str());
-}
-
-void Logger::endData(void) {
-  writeTime = writeTime + millis();
-  // get rid of the last comma
-  // data >> std::ws;
-  // end the data string
-
-  // increment the data count
   dataCount++;
 
-  // if we have written 1000 data points, flush the buffer
-  // if (dataCount >= 100) {
-  //   int time = millis();
-  //   // file.print(data.str().c_str());
-  //   file.flush();
-  //   // printer.printValue(12, "Time taken to flush: " + String(millis() -
-  //   // time));
-  //   file.write(("Time taken to flush: " + String(millis() - time)).c_str());
-  //   file.write(("Average time per write: " + String(writeTime / 1000) + "
-  //   ms")
-  //                  .c_str());
-  //   dataCount = 0;
-  //   data.str("");
-  //   writeTime = 0;
+  writeTime = writeTime + millis();
 
-  //   flushCount++;
-  // }
+  if (dataCount >= 100) {
+    flushTime = millis();
+    file.flush();
+    flushTime = millis() - flushTime;
+    flushCount++;
+    avgWriteTime = (float)writeTime / dataCount;
+    writeTime = 0;
+    dataCount = 0;
+    Serial.println(printState());
+  }
 
-  // if (dataCount >= 1000) {
-  //   int time = millis();
-  //   file.print(data.str().c_str());
-  //   file.flush();
-  //   time = millis() - time;
-  //   printer.printValue(12, "Time taken to flush: " + String(time));
-  //   file.println("Time taken to flush: " + String(time));
-  //   file.flush();
-  //   dataCount = 0;
-  // }
+  if (flushCount >= 10) {
+    file.close();
+    Serial.println("File closed");
+  }
 }
 
 String Logger::printState(void) {
@@ -120,5 +83,9 @@ String Logger::printState(void) {
   state += file.name();
   state += ", ";
   state += "Flush Count: " + String(flushCount);
+  state += ", ";
+  state += "Average Write Time: " + String(avgWriteTime);
+  state += ", ";
+  state += "Flush Time: " + String(flushTime);
   return state;
 }

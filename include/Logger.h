@@ -12,15 +12,9 @@ public:
 
   ~Logger(void);
 
-  void include(std::string header, bool endLine = false);
+  void include(std::string header);
 
   void init(void);
-
-  void beginData(void);
-
-  void writeData(std::string data, bool endLine = false);
-
-  void endData(void);
 
   String printState(void);
 
@@ -31,12 +25,15 @@ public:
   void close(void);
 
   int writeTime = 0;
+  int avgWriteTime = 0;
+  int flushTime = 0;
+
+  void write(std::string data);
 
 private:
   File file;
 
   std::stringstream headers;
-  std::stringstream data;
 
   int dataCount = 0;
 };

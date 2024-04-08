@@ -11,6 +11,7 @@ Authors:
 // #include <ADCSampler.h>
 #include <Arduino.h>
 // #include <ErrorFlagSampler.h>
+#include "FloatFormatter.h"
 #include <FlowSensor.h>
 #include <Logger.h>
 #include <MotorDriver.h>
@@ -46,6 +47,8 @@ ServoDriver rudder;
 StateEstimator stateEstimator;
 RobotControl robotControl;
 
+FloatFormatter formatter;
+
 // loop start recorder
 int loopStartTime;
 int currentTime;
@@ -57,7 +60,6 @@ float waypoints[7][3] = {{0, 0, 0},  {0, 0, 5},   {20, 0, 5}, {20, 0, 0},
 ////////////////////////* Setup *////////////////////////////////
 
 void setup() {
-
   // logger.include(imu.headers);
   logger.include(motor_driver.headers);
   logger.include(gyro.headers);
@@ -65,7 +67,7 @@ void setup() {
   logger.include(flow.headers);
   logger.include(rudder.headers);
   logger.include(stateEstimator.headers);
-  logger.include(robotControl.headers, true);
+  logger.include(robotControl.headers);
   logger.init();
 
   printer.init();
@@ -105,27 +107,27 @@ void loop() {
 
   currentTime = millis();
 
-  if (currentTime - printer.lastExecutionTime > LOOP_PERIOD &&
-      logger.writeTime < 10000) {
-    printer.lastExecutionTime = currentTime;
-    // printer.printValue(0,adc.printSample());
-    // printer.printValue(1,ef.printStates());
-    printer.printValue(0, logger.printState());
-    // printer.printValue(1, gps.printState());
-    printer.printValue(1, motor_driver.printState());
-    // printer.printValue(2, imu.printRollPitchHeading());
-    // printer.printValue(3, imu.printAccels());
-    // printer.printValue(4, gyro.printRollPitchYaw());
-    printer.printValue(3, gyro.printAccels());
-    printer.printValue(4, gyro.printOrientation());
-    printer.printValue(5, pSensor.printPressure());
-    printer.printValue(6, flow.printFlow());
-    printer.printValue(7, rudder.printState());
-    printer.printValue(8, stateEstimator.printState());
-    printer.printValue(9, robotControl.printString());
-    printer.printValue(10, robotControl.printWaypoint());
-    printer.printToSerial(); // To stop printing, just comment this line out
-  }
+  // if (currentTime - printer.lastExecutionTime > LOOP_PERIOD) {
+  //   printer.lastExecutionTime = currentTime;
+  //   // printer.printValue(0,adc.printSample());
+  //   // printer.printValue(1,ef.printStates());
+  //   // printer.printValue(0, logger.printState());
+  //   // printer.printValue(1, gps.printState());
+  //   // printer.printValue(1, motor_driver.printState());
+  //   // // printer.printValue(2, imu.printRollPitchHeading());
+  //   // // printer.printValue(3, imu.printAccels());
+  //   // // printer.printValue(4, gyro.printRollPitchYaw());
+  //   // printer.printValue(3, gyro.printAccels());
+  //   // printer.printValue(4, gyro.printOrientation());
+  //   // printer.printValue(5, pSensor.printPressure());
+  //   // printer.printValue(6, flow.printFlow());
+  //   // printer.printValue(7, rudder.printState());
+  //   // printer.printValue(8, stateEstimator.printState());
+  //   // printer.printValue(9, robotControl.printString());
+  //   // printer.printValue(10, robotControl.printWaypoint());
+  //   // printer.printToSerial(); // To stop printing, just comment this line
+  //   out
+  // }
 
   // if (currentTime - imu.lastExecutionTime > LOOP_PERIOD) {
   //   imu.lastExecutionTime = currentTime;
@@ -154,19 +156,18 @@ void loop() {
   //   led.flashLED(&gps.state);
   // }
 
-  if (currentTime - logger.lastExecutionTime > 20 / LOOP_PERIOD) {
-    counter += 1;
+  if (currentTime - logger.lastExecutionTime > 50) {
     logger.lastExecutionTime = currentTime;
-    logger.beginData();
-    // logger.writeData(imu.logData());
-    logger.writeData(motor_driver.logData());
-    logger.writeData(gyro.logData());
-    logger.writeData(pSensor.logData());
-    logger.writeData(flow.logData());
-    logger.writeData(rudder.logData());
-    logger.writeData(stateEstimator.logData());
-    logger.writeData(robotControl.logData(), true);
-    logger.endData();
+    std::string data = "";
+    data += motor_driver.logData() + ",";
+    data += gyro.logData() + ",";
+    data += pSensor.logData() + ",";
+    data += flow.logData() + ",";
+    data += rudder.logData() + ",";
+    data += stateEstimator.logData() + ",";
+    data += robotControl.logData();
+    data.pop_back();
+    logger.write(data);
   }
 
   // if (currentTime - adc.lastExecutionTime > LOOP_PERIOD) {
@@ -176,9 +177,4 @@ void loop() {
 
   // no matter what the state, update the robot control
   robotControl.update();
-
-  if (millis() - logger.writeTime > 10000) {
-    logger.close();
-    logger.flushCount += 1;
-  }
 }
