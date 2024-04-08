@@ -44,17 +44,19 @@ void Logger::init(void) {
   // write the header to the file
   std::string header = headers.str();
   header.pop_back();
-  file.print((header + "\n").c_str());
+  file.write((header + "\n").c_str());
+  file.flush();
 }
 
 void Logger::write(std::string data) {
   // write the data to the file
   // file.write(data.c_str());
-
+  std::string time = std::to_string(millis());
+  time += ",";
   writeTime = writeTime - millis();
-  file.print(String(millis() + ",").c_str());
+  file.write(time.c_str());
   data.pop_back();
-  file.print((data + "\n").c_str());
+  file.write((data + "\n").c_str());
 
   dataCount++;
 
