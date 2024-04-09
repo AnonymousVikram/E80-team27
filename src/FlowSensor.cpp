@@ -26,7 +26,9 @@ String FlowSensor::printFlow(void) {
   return FlowStr;
 }
 
-std::string FlowSensor::logData(void) { return formatter.format(velocity); }
+std::string FlowSensor::logData(void) {
+  return (formatter.format(velocity) + ",");
+}
 
 float FlowSensor::Lmin_to_mps(float rate) {
   // return (rate * flow_cal_slope + flow_cal_offset) / pipe_cs_area / 1000.0F

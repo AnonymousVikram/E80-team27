@@ -18,7 +18,7 @@
 
 // Motor D: pins 14, 15 L
 #define MOTOR_D_DIRECTION 15 // IN1 // Teensy pin A01
-#define MOTOR_D_SPEED 14     // IN2 // Teensy pin A00
+#define MOTOR_D_SPEED 14     // IN2 // Teensy pin A00 ! Should be 14
 
 // Motor E: pins 28, 29 R
 #define MOTOR_E_DIRECTION 29 // IN1
@@ -42,6 +42,7 @@
 
 // Rudder Servo
 #define RUDDER_SERVO_PIN 25 // Teensy  pin A11
+#define FREQ_READER_PIN 32  //! Should be 32
 
 /*
  * Note: the Gyro is connected to I2C Bus 1:

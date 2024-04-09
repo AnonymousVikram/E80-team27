@@ -73,7 +73,7 @@ void Logger::write(std::string data) {
     Serial.println(printState());
   }
 
-  if (flushCount >= 10) {
+  if (flushCount >= 599) {
     file.close();
     Serial.println("File closed");
   }

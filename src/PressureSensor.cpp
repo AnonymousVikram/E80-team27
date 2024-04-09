@@ -27,4 +27,6 @@ String PressureSensor::printPressure(void) {
   return PressureStr;
 }
 
-std::string PressureSensor::logData(void) { return formatter.format(depth); }
+std::string PressureSensor::logData(void) {
+  return (formatter.format(depth) + ",");
+}

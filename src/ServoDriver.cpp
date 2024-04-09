@@ -35,4 +35,6 @@ String ServoDriver::printState(void) {
   return printString;
 }
 
-std::string ServoDriver::logData(void) { return formatter.format(servoOut); }
+std::string ServoDriver::logData(void) {
+  return (formatter.format(servoOut) + ",");
+}
