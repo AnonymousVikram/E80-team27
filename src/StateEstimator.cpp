@@ -1,15 +1,14 @@
 #include "StateEstimator.h"
-#include "FlowSensor.h"
+#include "FloatFormatter.h"
+#include "FreqReader.h"
 #include "PressureSensor.h"
 #include "SensorGyro.h"
-// #include "SensorIMU.h"
-#include "FloatFormatter.h"
 #include <math.h>
 
 extern FloatFormatter formatter;
 
 // extern SensorIMU imu;
-extern FlowSensor flow;
+extern FreqReader freqReader;
 extern PressureSensor pSensor;
 extern SensorGyro gyro;
 
@@ -42,7 +41,7 @@ void StateEstimator::init(void) {
 void StateEstimator::updateState(void) {
   // update the state based on velocity from flow sensor, depth from pressure
   // sensor, and roll and yaw from gyro
-  float v = flow.velocity;
+  float v = freqReader.velocity;
   float depth = pSensor.depth;
 
   // Gyro Vals

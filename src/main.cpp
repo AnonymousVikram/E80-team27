@@ -12,21 +12,17 @@ Authors:
 #include <Arduino.h>
 // #include <ErrorFlagSampler.h>
 #include "FloatFormatter.h"
-#include <FlowSensor.h>
-#include <FreqReader.h>
-#include <Logger.h>
-#include <MotorDriver.h>
-#include <Pinouts.h>
-#include <PressureSensor.h>
-#include <Printer.h>
-#include <SensorGyro.h>
-
-// #include <SensorGPS.h>
-#include <RobotControl.h>
-// #include <SensorIMU.h>
-#include <ServoDriver.h>
-#include <StateEstimator.h>
-#include <TimingOffsets.h>
+#include "FreqReader.h"
+#include "Logger.h"
+#include "MotorDriver.h"
+#include "Pinouts.h"
+#include "PressureSensor.h"
+#include "Printer.h"
+#include "RobotControl.h"
+#include "SensorGyro.h"
+#include "ServoDriver.h"
+#include "StateEstimator.h"
+#include "TimingOffsets.h"
 #include <Wire.h>
 #include <avr/interrupt.h>
 #include <avr/io.h>
@@ -42,13 +38,11 @@ MotorDriver motor_driver;
 Logger logger;
 Printer printer;
 SensorGyro gyro;
-FlowSensor flow;
 PressureSensor pSensor;
 ServoDriver rudder;
 StateEstimator stateEstimator;
 RobotControl robotControl;
 FreqReader freqReader;
-
 FloatFormatter formatter;
 
 // loop start recorder
@@ -62,45 +56,30 @@ float waypoints[7][3] = {{0, 0, 0},  {0, 0, 5},   {20, 0, 5}, {20, 0, 0},
 ////////////////////////* Setup *////////////////////////////////
 
 void setup() {
-  // logger.include(imu.headers);
-  logger.include(motor_driver.headers);
   logger.include(gyro.headers);
-  logger.include(pSensor.headers);
-  logger.include(flow.headers);
-  logger.include(rudder.headers);
-  logger.include(stateEstimator.headers);
-  logger.include(robotControl.headers);
   logger.include(freqReader.headers);
+  logger.include(pSensor.headers);
+  logger.include(stateEstimator.headers);
+  logger.include(motor_driver.headers);
+  logger.include(rudder.headers);
+  logger.include(robotControl.headers);
   logger.init();
 
   printer.init();
-  // ef.init();
-  // imu.init();
   UartSerial.begin(9600);
-  // gps.init(&GPS);
   motor_driver.init();
-  // led.init();
   gyro.init();
   pSensor.init();
-  flow.init();
   rudder.init();
-  // adc.init();
   stateEstimator.init();
   robotControl.init(7, waypoints);
 
   printer.printMessage("Starting main loop", 1);
   loopStartTime = millis();
   printer.lastExecutionTime = loopStartTime - LOOP_PERIOD + PRINTER_LOOP_OFFSET;
-  // imu.lastExecutionTime = loopStartTime - LOOP_PERIOD + IMU_LOOP_OFFSET;
-  // gps.lastExecutionTime = loopStartTime - LOOP_PERIOD + GPS_LOOP_OFFSET;
-  // adc.lastExecutionTime = loopStartTime - LOOP_PERIOD + ADC_LOOP_OFFSET;
-  // ef.lastExecutionTime = loopStartTime - LOOP_PERIOD +
-  // ERROR_FLAG_LOOP_OFFSET;
   gyro.lastExecutionTime = loopStartTime - LOOP_PERIOD + GYRO_LOOP_OFFSET;
   pSensor.lastExecutionTime =
       loopStartTime - LOOP_PERIOD + PRESSURE_SENSOR_LOOP_OFFSET;
-  flow.lastExecutionTime =
-      loopStartTime - LOOP_PERIOD + FLOW_SENSOR_LOOP_OFFSET;
   logger.lastExecutionTime = loopStartTime - LOOP_PERIOD + LOGGER_LOOP_OFFSET;
   freqReader.lastExecutionTime =
       loopStartTime - LOOP_PERIOD + FREQ_READER_LOOP_OFFSET;
@@ -144,27 +123,21 @@ void loop() {
     pSensor.read();
   }
 
-  if (currentTime - flow.lastExecutionTime > LOOP_PERIOD) {
-    flow.lastExecutionTime = currentTime;
-    flow.read();
-  }
-
   if (currentTime - freqReader.lastExecutionTime > LOOP_PERIOD) {
     freqReader.lastExecutionTime = currentTime;
     freqReader.read();
   }
 
-  if (currentTime - logger.lastExecutionTime > 10) {
+  if (currentTime - logger.lastExecutionTime > 8) {
     logger.lastExecutionTime = currentTime;
     std::string data = "";
-    data += motor_driver.logData();
     data += gyro.logData();
-    data += pSensor.logData();
-    data += flow.logData();
-    data += rudder.logData();
-    data += stateEstimator.logData();
-    data += robotControl.logData();
     data += freqReader.logData();
+    data += pSensor.logData();
+    data += stateEstimator.logData();
+    data += motor_driver.logData();
+    data += rudder.logData();
+    data += robotControl.logData();
     logger.write(data);
   }
 

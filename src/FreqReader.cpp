@@ -18,13 +18,19 @@ void FreqReader::read(void) {
   if (curVal != isHigh) {
     if (curVal) {
       frequency = 1000000.0 / (currentTime - lastTime) / 2.0;
-      Serial.println(frequency);
+      freqToVel();
+      Serial.println(velocity);
     }
     isHigh = curVal;
     lastTime = currentTime;
   }
 }
 
+void FreqReader::freqToVel(void) {
+  // convert frequency to velocity
+  velocity = frequency * velCalSlope + velCalOffset;
+}
+
 std::string FreqReader::logData(void) {
-  return (formatter.format(frequency) + ",");
+  return (formatter.format(frequency) + "," + formatter.format(velocity) + ",");
 }

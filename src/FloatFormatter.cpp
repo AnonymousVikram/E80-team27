@@ -5,7 +5,7 @@ FloatFormatter::FloatFormatter(void) {
 }
 
 std::string FloatFormatter::format(float value) {
-  data << value << ",";
+  data << value;
   std::string returner = data.str();
   data.str("");
   return returner;

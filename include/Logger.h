@@ -31,6 +31,7 @@ public:
   void write(std::string data);
 
 private:
+  bool writing = false;
   File file;
 
   std::stringstream headers;

@@ -31,6 +31,7 @@ void Logger::init(void) {
     if (!SD.exists(fileName)) {
       file = SD.open(fileName, O_WRITE | O_CREAT);
       Serial.println("File opened");
+      writing = true;
       break;
     }
   }
@@ -49,12 +50,22 @@ void Logger::init(void) {
 }
 
 void Logger::write(std::string data) {
+  if (!writing) {
+    return;
+  }
   // write the data to the file
   // file.write(data.c_str());
   std::string time = std::to_string(millis());
   time += ",";
   writeTime = writeTime - millis();
-  file.write(time.c_str());
+  int bytes = file.write(time.c_str());
+  // check if the write was successful
+  if (bytes == 0) {
+    Serial.println("Write failed");
+    file.close();
+    writing = false;
+    return;
+  }
   data.pop_back();
   file.write((data + "\n").c_str());
 
@@ -73,9 +84,9 @@ void Logger::write(std::string data) {
     Serial.println(printState());
   }
 
-  if (flushCount >= 599) {
+  if (flushCount >= 10000) {
     file.close();
-    Serial.println("File closed");
+    // Serial.println("File closed");
   }
 }
 

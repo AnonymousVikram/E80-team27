@@ -37,9 +37,6 @@
 // Depth Control
 #define PRESSURE_SENSOR_PIN 20 // Teensy pin A12 // change back to 26
 
-// Flow Sensor
-#define FLOW_SENSOR_PIN 26 // Teensy pin A06 // break 20
-
 // Rudder Servo
 #define RUDDER_SERVO_PIN 25 // Teensy  pin A11
 #define FREQ_READER_PIN 32  //! Should be 32
