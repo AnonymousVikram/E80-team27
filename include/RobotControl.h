@@ -19,10 +19,12 @@ extern MotorDriver motorDriver;
 extern ServoDriver servoDriver;
 extern StateEstimator stateEstimator;
 
+#define NUMWAYPOINTS 3
+
 class RobotControl {
 public:
   RobotControl(void);
-  void init(const int numWaypoints, const float waypoints[][3]);
+  void init(int numWaypoints, float waypoints[][3]);
   void update(void);
 
   String printString(void);
@@ -49,21 +51,21 @@ private:
   float angleDiff(float angle);
 
   // control values
-  int motorPowers[NUM_MOTORS] = {0, 0, 0, 0, 0, 0};
+  int motorPowers[NUM_MOTORS];
 
   // control gains
   float diveKp = 1000;
-  float diveKd = 0.1;
+  float diveKd = 100;
   float throttleKp = 1000;
-  float throttleKd = 0.1;
-  float yawKp = 1000;
-  float yawKd = 0.1;
+  float throttleKd = 100;
+  float yawKp = 5;
+  float yawKd = 100;
   float rollKp = 1000;
-  float rollKd = 0.1;
+  float rollKd = 100;
 
   bool waiting = false;
   int waitBeg = 0;
 
-  float waypoints[][3];
+  float waypoints[NUMWAYPOINTS][3];
 };
 #endif

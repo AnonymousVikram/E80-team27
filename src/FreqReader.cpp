@@ -19,7 +19,7 @@ void FreqReader::read(void) {
     if (curVal) {
       frequency = 1000000.0 / (currentTime - lastTime) / 2.0;
       freqToVel();
-      Serial.println(velocity);
+      // Serial.println(velocity);
     }
     isHigh = curVal;
     lastTime = currentTime;

@@ -9,18 +9,18 @@
 #define GYRO_THRESHOLD 0.01F
 
 typedef struct {
-  float accelX;   // [mg] (g=acceleration due to gravity)
-  float accelY;   // [mg]
-  float accelZ;   // [mg]
-  float droll;    // [degrees/s]
-  float dpitch;   // [degrees/s]
-  float dheading; // [degrees/s]
+  double accelX;   // [mg] (g=acceleration due to gravity)
+  double accelY;   // [mg]
+  double accelZ;   // [mg]
+  double droll;    // [degrees/s]
+  double dpitch;   // [degrees/s]
+  double dheading; // [degrees/s]
 } gyro_state_t;
 
 typedef struct {
-  float roll;  // [degrees]
-  float pitch; // [degrees]
-  float yaw;   // [degrees]
+  double roll;  // [degrees]
+  double pitch; // [degrees]
+  double yaw;   // [degrees]
 } orientation_t;
 
 class SensorGyro {

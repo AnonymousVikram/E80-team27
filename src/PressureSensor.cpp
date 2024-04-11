@@ -18,6 +18,7 @@ void PressureSensor::read(void) {
   float curPres = analogRead(PRESSURE_SENSOR_PIN);
   curPres = curPres / 1023.0 * 3.3;
   depth = (curPres + pressure_cal_offset) * pressure_cal_slope;
+  // Serial.println(printPressure());
 }
 
 String PressureSensor::printPressure(void) {

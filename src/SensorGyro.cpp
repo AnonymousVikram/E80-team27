@@ -11,6 +11,7 @@ void SensorGyro::init(void) {
   Serial.print("Initializing Gyro... ");
   // Creating i2c interface
   myGyro.begin_I2C();
+  Wire1.setClock(400000);
 
   Serial.println("done");
 }
@@ -34,14 +35,16 @@ void SensorGyro::read(void) {
 
   // Update orientation if the gyro crosses a threshold
   if (abs(state.droll) > GYRO_THRESHOLD) {
-    orientation.roll += state.droll * LOOP_PERIOD / 1000.0;
+    orientation.roll += state.droll * GYRO_PERIOD / 1000.0;
   }
   if (abs(state.dpitch) > GYRO_THRESHOLD) {
-    orientation.pitch += state.dpitch * LOOP_PERIOD / 1000.0;
+    orientation.pitch += state.dpitch * GYRO_PERIOD / 1000.0;
   }
   if (abs(state.dheading) > GYRO_THRESHOLD) {
-    orientation.yaw += state.dheading * LOOP_PERIOD / 1000.0;
+    orientation.yaw += state.dheading * GYRO_PERIOD / 1000.0;
   }
+
+  // Serial.println(printOrientation());
 }
 
 String SensorGyro::printRollPitchYaw(void) {

@@ -16,12 +16,13 @@ RobotControl::RobotControl(void) {
   }
 }
 
-void RobotControl::init(const int numWaypoints, const float waypoints[][3]) {
-  this->numWaypoints = numWaypoints;
+void RobotControl::init(int inNumWaypoints, float inWaypoints[][3]) {
+  numWaypoints = inNumWaypoints;
+
   for (int i = 0; i < numWaypoints; i++) {
-    this->waypoints[i][0] = waypoints[i][0];
-    this->waypoints[i][1] = waypoints[i][1];
-    this->waypoints[i][2] = waypoints[i][2];
+    for (int j = 0; j < 3; j++) {
+      waypoints[i][j] = inWaypoints[i][j];
+    }
   }
 }
 
@@ -77,34 +78,28 @@ void RobotControl::update(void) {
   float rollControl = rollKp * rollError + rollKd * rollRate;
 
   // Update the motor powers
-  if (diveError > depth_threshold) {
+  if (diveError > depth_threshold) { // if diving
     motorPowers[0] = 0;
     motorPowers[1] = 0;
     motorPowers[2] = diveControl;
     motorPowers[3] = 0;
-    motorPowers[4] = 0;
-    motorPowers[5] = diveControl;
-    rudder.servoOut = 0;
-  } else if (yawError > yaw_threshold) {
-    motorPowers[0] = 128;
-    motorPowers[1] = 128;
+    motorPowers[4] = diveControl;
+  } else if (yawError > yaw_threshold) { // rotating
+    motorPowers[0] = 200;
+    motorPowers[1] = 200;
     motorPowers[2] = diveControl;
-    motorPowers[3] = 128;
-    motorPowers[4] = 128;
-    motorPowers[5] = diveControl;
-    rudder.servoOut = yawControl;
-  } else {
+    motorPowers[3] = 200;
+    motorPowers[4] = diveControl;
+  } else { // navigate
     // combine everything to navigate to the waypoint
     // motor powers 0 and 3 are the left motors
     // motor powers 1 and 4 are the right motors
     // motor powers 2 and 5 are the vertical motors
-    motorPowers[0] = throttleControl - rollControl;
-    motorPowers[1] = throttleControl + rollControl;
-    motorPowers[2] = throttleControl + diveControl;
-    motorPowers[3] = throttleControl + rollControl;
-    motorPowers[4] = throttleControl - rollControl;
-    motorPowers[5] = throttleControl + diveControl;
-    rudder.servoOut = yawControl;
+    motorPowers[0] = throttleControl;
+    motorPowers[1] = throttleControl;
+    motorPowers[2] = diveControl + rollControl;
+    motorPowers[3] = throttleControl;
+    motorPowers[4] = diveControl - rollControl;
   }
 
   if (waiting) {
@@ -115,13 +110,20 @@ void RobotControl::update(void) {
     motorPowers[1] = -throttleKp * ax;
     motorPowers[2] = -diveKp * az;
     motorPowers[3] = -throttleKp * ax;
-    motorPowers[4] = -throttleKp * ax;
-    motorPowers[5] = -diveKp * az;
+    motorPowers[4] = -diveKp * az;
   }
+
+  // constrain the motor powers
+  for (int m = 0; m < NUM_MOTORS; m++) {
+    motorPowers[m] = constrain(motorPowers[m], -240, 240);
+  }
+
+  yawControl = constrain(yawControl, -PI / 3, PI / 3);
+  rudder.drive(yawControl);
 
   // update the motor powers
   motor_driver.drive(motorPowers[0], motorPowers[1], motorPowers[2],
-                     motorPowers[3], motorPowers[4], motorPowers[5]);
+                     motorPowers[3], motorPowers[4]);
 }
 
 String RobotControl::printString(void) {

@@ -30,7 +30,7 @@ private:
 
   // Latest reported flow data is stored here
   float frequency = 0;
-  float velCalSlope = 1.0F;
-  float velCalOffset = 0.0F;
+  float velCalSlope = 0.0309095;
+  float velCalOffset = 0.0439842F;
 };
 #endif

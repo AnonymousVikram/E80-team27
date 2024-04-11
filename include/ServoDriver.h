@@ -17,7 +17,7 @@ public:
 
   void drive(float angle);
 
-  float servoOut = 0;
+  float servoOut = 0.0;
   std::string logData(void);
 
   std::string headers = "Servo Angle [rad]";

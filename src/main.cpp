@@ -28,7 +28,7 @@ Authors:
 #include <avr/io.h>
 
 #define UartSerial Serial1
-#define DELAY 0
+#define DELAY 3 * 60 * 1000
 // #include <GPSLockLED.h>
 
 /////////////////////////* Global Variables *////////////////////////
@@ -48,10 +48,9 @@ FloatFormatter formatter;
 // loop start recorder
 int loopStartTime;
 int currentTime;
-int current_way_point = 0;
 
-float waypoints[7][3] = {{0, 0, 0},  {0, 0, 5},   {20, 0, 5}, {20, 0, 0},
-                         {20, 0, 5}, {20, 20, 5}, {20, 20, 0}};
+// waypoints
+float waypoints[NUMWAYPOINTS][3] = {{0, 0, 1}, {2, 0, 1}, {2, 0, 0}};
 
 ////////////////////////* Setup *////////////////////////////////
 
@@ -72,7 +71,9 @@ void setup() {
   pSensor.init();
   rudder.init();
   stateEstimator.init();
-  robotControl.init(7, waypoints);
+  robotControl.init(3, waypoints);
+
+  delay(DELAY);
 
   printer.printMessage("Starting main loop", 1);
   loopStartTime = millis();
@@ -86,34 +87,34 @@ void setup() {
 }
 
 //////////////////////////////* Loop */////////////////////////
-int counter = 0;
+// int counter = 0;
 void loop() {
 
   currentTime = millis();
 
   // if (currentTime - printer.lastExecutionTime > LOOP_PERIOD) {
   //   printer.lastExecutionTime = currentTime;
-  // printer.printValue(0,adc.printSample());
-  // printer.printValue(1,ef.printStates());
-  // printer.printValue(0, logger.printState());
-  // printer.printValue(1, gps.printState());
-  // printer.printValue(1, motor_driver.printState());
-  // printer.printValue(2, imu.printRollPitchHeading());
-  // printer.printValue(3, imu.printAccels());
-  // printer.printValue(4, gyro.printRollPitchYaw());
-  // printer.printValue(3, gyro.printAccels());
-  // printer.printValue(4, gyro.printOrientation());
-  // printer.printValue(5, pSensor.printPressure());
-  // printer.printValue(6, flow.printFlow());
-  // printer.printValue(7, rudder.printState());
-  // printer.printValue(8, stateEstimator.printState());
-  // printer.printValue(9, robotControl.printString());
-  // printer.printValue(10, robotControl.printWaypoint());
-  // printer.printToSerial(); // To stop printing, just comment this line
-  //   out
+  //   // printer.printValue(0, adc.printSample());
+  //   // printer.printValue(1, ef.printStates());
+  //   printer.printValue(0, logger.printState());
+  //   // printer.printValue(1, gps.printState());
+  //   printer.printValue(1, motor_driver.printState());
+  //   // printer.printValue(2, imu.printRollPitchHeading());
+  //   // printer.printValue(3, imu.printAccels());
+  //   printer.printValue(2, gyro.printRollPitchYaw());
+  //   printer.printValue(3, gyro.printAccels());
+  //   printer.printValue(4, gyro.printOrientation());
+  //   printer.printValue(5, pSensor.printPressure());
+  //   // printer.printValue(6, flow.printFlow());
+  //   printer.printValue(6, freqReader.velocity);
+  //   printer.printValue(7, rudder.printState());
+  //   printer.printValue(8, stateEstimator.printState());
+  //   printer.printValue(9, robotControl.printString());
+  //   printer.printValue(10, robotControl.printWaypoint());
+  //   printer.printToSerial(); // To stop printing, just comment this line
   // }
 
-  if (currentTime - gyro.lastExecutionTime > LOOP_PERIOD) {
+  if (currentTime - gyro.lastExecutionTime > GYRO_PERIOD) {
     gyro.lastExecutionTime = currentTime;
     gyro.read();
   }
@@ -128,7 +129,7 @@ void loop() {
     freqReader.read();
   }
 
-  if (currentTime - logger.lastExecutionTime > 8) {
+  if (currentTime - logger.lastExecutionTime > LOGGER_PERIOD) {
     logger.lastExecutionTime = currentTime;
     std::string data = "";
     data += gyro.logData();

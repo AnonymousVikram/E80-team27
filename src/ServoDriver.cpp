@@ -15,6 +15,7 @@ void ServoDriver::init(void) {
 
 void ServoDriver::apply(void) {
   analogWrite(RUDDER_SERVO_PIN, round(servoOut / 20.0 * 255.0));
+  Serial.println(servoOut);
 }
 
 void ServoDriver::drive(float angle) {
@@ -24,10 +25,16 @@ void ServoDriver::drive(float angle) {
 }
 
 void ServoDriver::setServoOut(float angle) {
+  if (angle < 0) {
+    servoOut = 0.525211 * angle + 1.275;
+  } else {
+    servoOut = 0.588873 * angle + 1.275;
+  }
   // angle = angle * 1.0 / 3.0;
-  servoOut = 0.634011 * angle + 1.16311;
+  // Serial.println(angle);
   // servoOut = angle;
-  servoOut = constrain(servoOut, 0.6, 1.83);
+  servoOut = constrain(servoOut, 0.45, 2.2);
+  Serial.println(servoOut);
 }
 
 String ServoDriver::printState(void) {

@@ -18,15 +18,11 @@
 
 // Motor D: pins 14, 15 L
 #define MOTOR_D_DIRECTION 15 // IN1 // Teensy pin A01
-#define MOTOR_D_SPEED 14     // IN2 // Teensy pin A00 ! Should be 14
+#define MOTOR_D_SPEED 14 //! Should be 14 IN2 // Teensy pin A00 ! Should be 14
 
 // Motor E: pins 28, 29 R
 #define MOTOR_E_DIRECTION 29 // IN1
 #define MOTOR_E_SPEED 28     // IN2
-
-// Motor F: pins 24, 33 V
-#define MOTOR_F_DIRECTION 33 // IN1
-#define MOTOR_F_SPEED 24     // IN2 // Teensy pin A10
 // **********************************************************
 
 // Error Flags
@@ -38,13 +34,13 @@
 #define PRESSURE_SENSOR_PIN 20 // Teensy pin A12 // change back to 26
 
 // Rudder Servo
-#define RUDDER_SERVO_PIN 25 // Teensy  pin A11
+#define RUDDER_SERVO_PIN 25 //! Should be 25Teensy  pin A11
 #define FREQ_READER_PIN 32  //! Should be 32
 
 /*
  * Note: the Gyro is connected to I2C Bus 1:
  *  SCL: 16 (Teensy Pin A2)
- *  SDA: 17 (Teensy Pin A3)
+ *  SDA:   (Teensy Pin A3)
  */
 
 /*

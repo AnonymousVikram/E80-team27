@@ -40,31 +40,24 @@ void MotorDriver::apply(void) {
 }
 
 void MotorDriver::drive(int motorA_power, int motorB_power, int motorC_power,
-                        int motorD_power, int motorE_power, int motorF_power) {
-  motorValues[MOTOR_A_INDEX] = motorA_power; // M1
-  motorValues[MOTOR_B_INDEX] = motorB_power; // M2
-  motorValues[MOTOR_C_INDEX] = motorC_power; // M3
-  motorValues[MOTOR_D_INDEX] = motorD_power; // M4
-  motorValues[MOTOR_E_INDEX] = motorE_power; // M5
-  motorValues[MOTOR_F_INDEX] = motorF_power; // M6
+                        int motorD_power, int motorE_power) {
+  motorValues[0] = motorA_power; // M1
+  motorValues[1] = motorB_power; // M2
+  motorValues[2] = motorC_power; // M3
+  motorValues[3] = motorD_power; // M4
+  motorValues[4] = motorE_power; // M5
   apply();
   printState();
 }
 
 String MotorDriver::printState(void) {
   String printString =
-      "[Motors]: PWMA: " + String(pwmDir[MOTOR_A_INDEX] ? " " : "-") +
-      String(pwmValues[MOTOR_A_INDEX]) +
-      " PWMB: " + String(pwmDir[MOTOR_B_INDEX] ? " " : "-") +
-      String(pwmValues[MOTOR_B_INDEX]) +
-      " PWMC: " + String(pwmDir[MOTOR_C_INDEX] ? " " : "-") +
-      String(pwmValues[MOTOR_C_INDEX]) +
-      " PWMD: " + String(pwmDir[MOTOR_D_INDEX] ? " " : "-") +
-      String(pwmValues[MOTOR_D_INDEX]) +
-      " PWME: " + String(pwmDir[MOTOR_E_INDEX] ? " " : "-") +
-      String(pwmValues[MOTOR_E_INDEX]) +
-      " PWMF: " + String(pwmDir[MOTOR_F_INDEX] ? " " : "-") +
-      String(pwmValues[MOTOR_F_INDEX]);
+      "[Motors]: PWMA: " + String(pwmDir[0] ? " " : "-") +
+      String(pwmValues[0]) + " PWMB: " + String(pwmDir[1] ? " " : "-") +
+      String(pwmValues[1]) + " PWMC: " + String(pwmDir[2] ? " " : "-") +
+      String(pwmValues[2]) + " PWMD: " + String(pwmDir[3] ? " " : "-") +
+      String(pwmValues[3]) + " PWME: " + String(pwmDir[4] ? " " : "-") +
+      String(pwmValues[4]);
   return printString;
 }
 
