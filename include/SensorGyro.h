@@ -47,18 +47,19 @@ public:
   int lastExecutionTime = -1;
 
   std::string headers =
-      "Accel X [mg],Accel Y [mg],Accel Z [mg],dRoll [deg/s],dPitch "
-      "[deg/s],dHeading [deg/s],Roll [deg],Pitch [deg],Yaw [deg]";
+      "Accel X [mg],Accel Y [mg],Accel Z [mg],dRoll [rad/s],dPitch "
+      "[rad/s],dHeading [rad/s],Roll [rad],Pitch [rad],Yaw [rad]";
 
 private:
   // Create sensor instance
   Adafruit_ISM330DHCX myGyro;
 
   // Offsets applied to raw x/y/z accel values
-  float accel_offsets[3] = {0.0F, -0.25F, 0.09F};
+  float accel_offsets[3] = {-0.04F, -0.11F, -9.77F};
 
   // Offsets applied to raw x/y/z gyro values
   float gyro_offsets[3] = {0.01F, 0.0F, 0.0F};
+  float angleDiff(float angle);
 };
 
 #endif

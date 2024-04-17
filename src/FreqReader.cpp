@@ -1,9 +1,11 @@
 #include "FreqReader.h"
 #include "FloatFormatter.h"
 #include "Pinouts.h"
+#include "SensorGyro.h"
 #include "TimingOffsets.h"
 
 extern FloatFormatter formatter;
+extern SensorGyro gyro;
 
 FreqReader::FreqReader(void) {
   // empty constructor
@@ -29,6 +31,15 @@ void FreqReader::read(void) {
 void FreqReader::freqToVel(void) {
   // convert frequency to velocity
   velocity = frequency * velCalSlope + velCalOffset;
+  if (abs(velocity) < 0.05) {
+    if (gyro.state.accelX > 0.1) {
+      fwd = 1;
+    } else if (gyro.state.accelX < -0.1) {
+      fwd = -1;
+    }
+  }
+
+  velocity = velocity * fwd;
 }
 
 std::string FreqReader::logData(void) {

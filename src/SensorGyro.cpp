@@ -24,8 +24,8 @@ void SensorGyro::read(void) {
   myGyro.getEvent(&accel_event, &gyro_event, &temp_event);
 
   // Remove offsets from acceleration measurements
-  state.accelX = accel_event.acceleration.x - accel_offsets[0];
-  state.accelY = accel_event.acceleration.y - accel_offsets[1];
+  state.accelX = accel_event.acceleration.x - accel_offsets[1];
+  state.accelY = accel_event.acceleration.y - accel_offsets[0];
   state.accelZ = accel_event.acceleration.z - accel_offsets[2];
 
   // Remove offsets from gyro measurements
@@ -36,15 +36,18 @@ void SensorGyro::read(void) {
   // Update orientation if the gyro crosses a threshold
   if (abs(state.droll) > GYRO_THRESHOLD) {
     orientation.roll += state.droll * GYRO_PERIOD / 1000.0;
+    orientation.roll = angleDiff(orientation.roll);
   }
   if (abs(state.dpitch) > GYRO_THRESHOLD) {
     orientation.pitch += state.dpitch * GYRO_PERIOD / 1000.0;
+    orientation.pitch = angleDiff(orientation.pitch);
   }
   if (abs(state.dheading) > GYRO_THRESHOLD) {
     orientation.yaw += state.dheading * GYRO_PERIOD / 1000.0;
+    orientation.yaw = angleDiff(orientation.yaw);
   }
 
-  // Serial.println(printOrientation());
+  // Serial.println(printAccels());
 }
 
 String SensorGyro::printRollPitchYaw(void) {
@@ -88,4 +91,14 @@ std::string SensorGyro::logData(void) {
          formatter.format(orientation.roll) + "," +
          formatter.format(orientation.pitch) + "," +
          formatter.format(orientation.yaw) + ",";
+}
+
+float SensorGyro::angleDiff(float angle) {
+  if (angle > PI) {
+    return angle - 2 * PI;
+  } else if (angle < -PI) {
+    return angle + 2 * PI;
+  } else {
+    return angle;
+  }
 }

@@ -28,7 +28,7 @@ Authors:
 #include <avr/io.h>
 
 #define UartSerial Serial1
-#define DELAY 3 * 60 * 1000
+#define DELAY 1.5 * 60 * 1000
 // #include <GPSLockLED.h>
 
 /////////////////////////* Global Variables *////////////////////////
@@ -50,7 +50,7 @@ int loopStartTime;
 int currentTime;
 
 // waypoints
-float waypoints[NUMWAYPOINTS][3] = {{0, 0, 1}, {2, 0, 1}, {2, 0, 0}};
+float waypoints[NUMWAYPOINTS][3] = {{0, 0, 1}, {1, 0, 1}, {1, 0, 0}};
 
 ////////////////////////* Setup *////////////////////////////////
 

@@ -1,10 +1,10 @@
 #ifndef ROBOT_CONTROL_H_INCLUDED
 #define ROBOT_CONTROL_H_INCLUDED
 
-#define proximity_threshold 0.1
+#define proximity_threshold 0.2
 #define yaw_threshold 0.05
 #define depth_threshold 0.1
-#define waitTime 5000
+#define waitTime 1000
 
 #include "MotorDriver.h"
 #include "Pinouts.h"
@@ -33,7 +33,7 @@ public:
   int lastExecutionTime = -1;
 
   std::string headers =
-      "Waypoint X [m], Waypoint Y [m], Waypoint Z [m], Waiting [bool]";
+      "Waypoint X [m],Waypoint Y [m],Waypoint Z [m],Waiting [bool]";
 
   std::string logData(void);
 
@@ -42,7 +42,7 @@ private:
 
   int numWaypoints;
   int currentWaypoint = 0;
-  float distanceToWaypoint(float x, float y, float z);
+  float distanceToWaypoint(float x, float y);
   float xyDistanceToWaypoint(float x, float y);
   float zDistanceToWaypoint(float z);
   float deltaYawToWaypoint(float x, float y, float *heading);
@@ -55,13 +55,13 @@ private:
 
   // control gains
   float diveKp = 1000;
-  float diveKd = 100;
-  float throttleKp = 1000;
-  float throttleKd = 100;
-  float yawKp = 5;
-  float yawKd = 100;
-  float rollKp = 1000;
-  float rollKd = 100;
+  float diveKd = 0;
+  float throttleKp = 200;
+  float throttleKd = 0;
+  float yawKp = 1.2;
+  float yawKd = 0;
+  float rollKp = 10;
+  float rollKd = 0;
 
   bool waiting = false;
   int waitBeg = 0;

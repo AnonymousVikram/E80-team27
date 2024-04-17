@@ -71,22 +71,22 @@ void Logger::write(std::string data) {
 
   dataCount++;
 
-  writeTime = writeTime + millis();
+  // writeTime = writeTime + millis();
 
-  if (dataCount >= 100) {
-    flushTime = millis();
+  if (dataCount >= 50) {
+    // flushTime = millis();
     file.flush();
-    flushTime = millis() - flushTime;
+    // flushTime = millis() - flushTime;
     flushCount++;
-    avgWriteTime = (float)writeTime / dataCount;
-    writeTime = 0;
+    // avgWriteTime = (float)writeTime / dataCount;
+    // writeTime = 0;
     dataCount = 0;
     // Serial.println(printState());
-
   }
 
-  if (flushCount >= 300) { // close after an hour of logging
+  if (flushCount >= 7200) { // close after an hour of logging
     file.close();
+    writing = false;
     // Serial.println("File closed");
   }
 }

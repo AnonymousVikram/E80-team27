@@ -18,7 +18,7 @@ public:
   int lastExecutionTime = -1;
 
   std::string headers =
-      "Frequency Reader Frequency [Hz], Calibrated Velocity [m/s]";
+      "Frequency Reader Frequency [Hz],Calibrated Velocity [m/s]";
 
   std::string logData(void);
   float velocity = 0;
@@ -32,5 +32,6 @@ private:
   float frequency = 0;
   float velCalSlope = 0.0309095;
   float velCalOffset = 0.0439842F;
+  float fwd = 1.0;
 };
 #endif

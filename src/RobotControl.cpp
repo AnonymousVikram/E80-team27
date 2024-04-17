@@ -38,7 +38,7 @@ void RobotControl::update(void) {
   float roll = state->roll;
   float heading = state->yaw;
 
-  float distance = distanceToWaypoint(x, y, z);
+  float distance = distanceToWaypoint(x, y);
   updateWaypoint(distance);
 
   // update the waypoint if we are close enough
@@ -62,7 +62,7 @@ void RobotControl::update(void) {
   float diveControl = diveKp * diveError + diveKd * diveRate;
 
   // Yaw Control
-  float yawError = headingError;
+  float yawError = heading;
   float yawRate = stateEstimator.curState.yaw - stateEstimator.prevState.yaw;
   float yawControl = yawKp * yawError + yawKd * yawRate;
 
@@ -78,17 +78,11 @@ void RobotControl::update(void) {
   float rollControl = rollKp * rollError + rollKd * rollRate;
 
   // Update the motor powers
-  if (diveError > depth_threshold) { // if diving
+  if (diveError > depth_threshold || waiting) { // if diving
     motorPowers[0] = 0;
     motorPowers[1] = 0;
     motorPowers[2] = diveControl;
     motorPowers[3] = 0;
-    motorPowers[4] = diveControl;
-  } else if (yawError > yaw_threshold) { // rotating
-    motorPowers[0] = 200;
-    motorPowers[1] = 200;
-    motorPowers[2] = diveControl;
-    motorPowers[3] = 200;
     motorPowers[4] = diveControl;
   } else { // navigate
     // combine everything to navigate to the waypoint
@@ -100,17 +94,6 @@ void RobotControl::update(void) {
     motorPowers[2] = diveControl + rollControl;
     motorPowers[3] = throttleControl;
     motorPowers[4] = diveControl - rollControl;
-  }
-
-  if (waiting) {
-    // use the motors to hold the current position
-    float ax = stateEstimator.curState.x - stateEstimator.prevState.x;
-    float az = stateEstimator.curState.z - stateEstimator.prevState.z;
-    motorPowers[0] = -throttleKp * ax;
-    motorPowers[1] = -throttleKp * ax;
-    motorPowers[2] = -diveKp * az;
-    motorPowers[3] = -throttleKp * ax;
-    motorPowers[4] = -diveKp * az;
   }
 
   // constrain the motor powers
@@ -155,11 +138,10 @@ std::string RobotControl::logData(void) {
          formatter.format(waiting) + ",";
 }
 
-float RobotControl::distanceToWaypoint(float x, float y, float z) {
+float RobotControl::distanceToWaypoint(float x, float y) {
   float dx = waypoints[currentWaypoint][0] - x;
   float dy = waypoints[currentWaypoint][1] - y;
-  float dz = waypoints[currentWaypoint][2] - z;
-  return sqrt(dx * dx + dy * dy + dz * dz);
+  return sqrt(dx * dx + dy * dy);
 }
 
 float RobotControl::xyDistanceToWaypoint(float x, float y) {

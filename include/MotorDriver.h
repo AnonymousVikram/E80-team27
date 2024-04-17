@@ -39,7 +39,7 @@ public:
   // from DataSource
   std::string logData(void);
 
-  std::string headers = "Motor A, Motor B, Motor C, Motor D, Motor E";
+  std::string headers = "Motor A,Motor B,Motor C,Motor D,Motor E";
 
 private:
   // pins for the motors

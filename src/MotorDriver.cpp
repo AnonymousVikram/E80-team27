@@ -65,6 +65,7 @@ std::string MotorDriver::logData(void) {
   std::string data = "";
   for (int m = 0; m < NUM_MOTORS; m++) {
     data += std::to_string(pwmValues[m]) + ",";
+    data = (pwmDir[m] ? "" : "-") + data;
   }
   return data;
 }
