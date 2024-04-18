@@ -55,6 +55,8 @@ float waypoints[NUMWAYPOINTS][3] = {{0, 0, 1}, {1, 0, 1}, {1, 0, 0}};
 ////////////////////////* Setup *////////////////////////////////
 
 void setup() {
+  delay(DELAY);
+
   logger.include(gyro.headers);
   logger.include(freqReader.headers);
   logger.include(pSensor.headers);
@@ -72,8 +74,6 @@ void setup() {
   rudder.init();
   stateEstimator.init();
   robotControl.init(3, waypoints);
-
-  delay(DELAY);
 
   printer.printMessage("Starting main loop", 1);
   loopStartTime = millis();

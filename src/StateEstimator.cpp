@@ -63,8 +63,8 @@ void StateEstimator::updateState(void) {
 
   // Update state
   prevState = curState;
-  curState.x = prevState.x + v * cos(yaw) * dt;
-  curState.y = prevState.y + v * sin(yaw) * dt;
+  curState.x = prevState.x + v * cos(yaw) * dt + ax * dt * dt / 2;
+  curState.y = prevState.y + v * sin(yaw) * dt + ay * dt * dt / 2;
   curState.z = depth;
   curState.roll = roll;
   curState.pitch = pitch;

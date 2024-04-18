@@ -56,7 +56,7 @@ private:
   // control gains
   float diveKp = 1000;
   float diveKd = 0;
-  float throttleKp = 200;
+  float throttleKp = 100;
   float throttleKd = 0;
   float yawKp = 1.2;
   float yawKd = 0;
