@@ -24,8 +24,6 @@ void Logger::init(void) {
 
   // iterate through increasing file numbers until we find one that doesn't
   // exist
-  // file.open("data");
-
   for (int i = 0; i < 1000; i++) {
     String fileName = "data" + String(i) + ".csv";
     if (!SD.exists(fileName)) {
