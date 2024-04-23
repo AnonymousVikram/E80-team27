@@ -37,6 +37,8 @@ public:
 
   std::string logData(void);
 
+  bool giveUp = false;
+
 private:
   state_t *state = &stateEstimator.curState;
 

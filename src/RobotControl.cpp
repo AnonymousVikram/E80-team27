@@ -96,6 +96,12 @@ void RobotControl::update(void) {
     motorPowers[4] = diveControl - rollControl;
   }
 
+  if (giveUp) {
+    for (int m = 0; m < NUM_MOTORS; m++) {
+      motorPowers[m] = -200;
+    }
+  }
+
   // constrain the motor powers
   for (int m = 0; m < NUM_MOTORS; m++) {
     motorPowers[m] = constrain(motorPowers[m], -240, 240);

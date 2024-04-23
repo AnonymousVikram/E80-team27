@@ -28,7 +28,7 @@ Authors:
 #include <avr/io.h>
 
 #define UartSerial Serial1
-#define DELAY 1.5 * 60 * 1000
+#define DELAY 2.5 * 60 * 1000
 // #include <GPSLockLED.h>
 
 /////////////////////////* Global Variables *////////////////////////
@@ -53,7 +53,7 @@ int currentTime;
 float waypoints[NUMWAYPOINTS][3] = {{0, 0, 1}, {1, 0, 1}, {1, 0, 0}};
 
 ////////////////////////* Setup *////////////////////////////////
-
+long startTime = 0;
 void setup() {
   delay(DELAY);
 
@@ -84,6 +84,8 @@ void setup() {
   logger.lastExecutionTime = loopStartTime - LOOP_PERIOD + LOGGER_LOOP_OFFSET;
   freqReader.lastExecutionTime =
       loopStartTime - LOOP_PERIOD + FREQ_READER_LOOP_OFFSET;
+  
+  startTime = millis();
 }
 
 //////////////////////////////* Loop */////////////////////////
@@ -91,6 +93,10 @@ void setup() {
 void loop() {
 
   currentTime = millis();
+
+  if (currentTime > startTime + 3*60*1000) {
+    robotControl.giveUp = true;
+  }
 
   // if (currentTime - printer.lastExecutionTime > LOOP_PERIOD) {
   //   printer.lastExecutionTime = currentTime;
