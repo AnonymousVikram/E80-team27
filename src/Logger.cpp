@@ -53,12 +53,10 @@ void Logger::write(std::string data) {
   if (!writing) {
     return;
   }
-  // write the data to the file
-  // file.write(data.c_str());
   std::string time = std::to_string(millis());
   time += ",";
-  writeTime = writeTime - millis();
   int bytes = file.write(time.c_str());
+
   // check if the write was successful
   if (!bytes) {
     Serial.println("Write failed");
@@ -66,28 +64,22 @@ void Logger::write(std::string data) {
     writing = false;
     return;
   }
+
+  // write the data
   data.pop_back();
   file.write((data + "\n").c_str());
 
   dataCount++;
 
-  // writeTime = writeTime + millis();
-
   if (dataCount >= 50) {
-    // flushTime = millis();
     file.flush();
-    // flushTime = millis() - flushTime;
     flushCount++;
-    // avgWriteTime = (float)writeTime / dataCount;
-    // writeTime = 0;
     dataCount = 0;
-    // Serial.println(printState());
   }
 
   if (flushCount >= 7200) { // close after an hour of logging
     file.close();
     writing = false;
-    // Serial.println("File closed");
   }
 }
 

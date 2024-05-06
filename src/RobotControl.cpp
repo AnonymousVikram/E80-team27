@@ -39,22 +39,16 @@ void RobotControl::update(void) {
   float heading = state->yaw;
 
   float distance = distanceToWaypoint(x, y);
-  updateWaypoint(distance);
+  updateWaypoint(distance); // update the waypoint if we are close enough
 
-  // update the waypoint if we are close enough
-
-  // calculate the desired heading
   float desiredHeading = atan2(waypoints[currentWaypoint][1] - y,
-                               waypoints[currentWaypoint][0] - x);
+                               waypoints[currentWaypoint][0] - x); // calculate the desired heading
 
-  // calculate the heading error
-  float headingError = angleDiff(desiredHeading - heading);
+  float headingError = angleDiff(desiredHeading - heading); // calculate the heading error
 
-  // calculate the forward error
-  float forwardError = distance * cos(headingError);
+  float forwardError = distance * cos(headingError); // calculate the forward error
 
-  // calculate the depth error
-  float depthError = waypoints[currentWaypoint][2] - z;
+  float depthError = waypoints[currentWaypoint][2] - z; // calculate the depth error
 
   // Dive Control
   float diveError = depthError;
